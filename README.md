@@ -1,5 +1,5 @@
-# Artificial-Life-Simulation
-Simulation of primitive artifial life with Turing's machine
+# Terrain-Generation
+Primitive procedural terrain generation with cellular automatas
 ## Contents
 - [Prerequisites](#prerequisites)
 - [Credits/Developers](#credits)
@@ -9,7 +9,7 @@ Simulation of primitive artifial life with Turing's machine
 ### Manual install
 ...
 ## Credits
-[Oleh Basystyi](https://github.com/n1n1n1q)
-[Anna Stasyshyn](https://github.com/annastasyshyn)
-[Viktor Pakholok](https://github.com/viktorpakholok)
+[Oleh Basystyi](https://github.com/n1n1n1q)  
+[Anna Stasyshyn](https://github.com/annastasyshyn)  
+[Viktor Pakholok](https://github.com/viktorpakholok)  
 [Olesya Hapyuk](https://github.com/olkaleska)
