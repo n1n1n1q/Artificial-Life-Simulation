@@ -10,7 +10,9 @@ class Cell(ABC):
     """
     Cell template class
     """
+
     SUBTYPES: dict
+
     def __init__(
         self,
         coordinates: tuple[int, int],
@@ -49,11 +51,14 @@ class Cell(ABC):
         probabilities = list(self.SUBTYPES.values())
         return random.choices(options, probabilities)[0]
 
+
 class Void(Cell):
     """
     Void cell class
     An empty cell that is going to be consumed by water
     """
+
+    SUBTYPES = {"void", 1}
 
     def __init__(self, coordinates, age=0) -> None:
         super().__init__(coordinates, age, "void", [], "#FFFFFF")
@@ -65,13 +70,14 @@ class Void(Cell):
         """
         return None
 
-    
 
 class Water(Cell):
     """
     Water cell class
     A cell class that represents a certain area filled with water
     """
+
+    SUBTYPES = {"cold": 0.5, "warm": 0.5}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 30, "water", "#1A4480", ["void"])
@@ -90,6 +96,8 @@ class Plains(Cell):
     Plains cell class
     A cell class that represents an area of plains type
     """
+
+    SUBTYPES = {"grassy": 0.95, "house": 0.05}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"])
@@ -113,6 +121,8 @@ class Desert(Cell):
     A cell class that represents an area of desert type
     """
 
+    SUBTYPES = {"cacti": 0.5, "wasteland": 0.495, "pyramid": 0.015}
+
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 50, "desert", "#f6d7b0", ["water"])
 
@@ -135,6 +145,8 @@ class Forest(Cell):
     A cell class that represents an area of forest type
     """
 
+    SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
+
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 60, "forest", "#44801a", ["plains"])
 
@@ -153,6 +165,8 @@ class Swamp(Cell):
     Swamp cell class
     A cell class that represents an area of swamp type
     """
+
+    SUBTYPES = {"swamp", 1}
 
     def __init__(self, coordinates, age) -> None:
         super().__init__(
@@ -192,12 +206,20 @@ class Snowy(Cell):
             self._change_state(other)
             other.prev_type = tmp
 
+    def get_subtype(self):
+        """
+        Get snowy cell's subtype
+        """
+        return self.prev_type if self.prev_type else "snowy"
+
 
 class Mountain(Cell):
     """
     Mountain cell class
     A cell class that represents an area of mountain type
     """
+
+    SUBTYPES = {"peaky": 0.05, "steep": 0.95}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
