@@ -29,13 +29,18 @@ class Cell(ABC):
         self.color = color
         self.submissive = submissive
         self.height = 0
+        self.changed = False
+        self.active = False
 
     def _change_state(self, other: "Cell"):
+        self.active = True
+        other.active = True
         other.__class__ = self.__class__
         other.color = self.color
         other.threshold_age = self.threshold_age
         other.type = self.type
         other.submissive = self.submissive
+        other.changed = True
 
     @abstractmethod
     def infect(self, other: "Cell") -> None:
@@ -53,6 +58,7 @@ class Cell(ABC):
 
     def __repr__(self):
         return f"{self.type} ({self.x}, {self.y})"
+
 
 class Void(Cell):
     """
@@ -82,7 +88,7 @@ class Water(Cell):
     SUBTYPES = {"cold": 0.5, "warm": 0.5}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 30, "water", "#1A4480", ["void"])
+        super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"])
 
     def infect(self, other: Cell) -> None:
         """
@@ -126,7 +132,7 @@ class Desert(Cell):
     SUBTYPES = {"cacti": 0.5, "wasteland": 0.495, "pyramid": 0.015}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 50, "desert", "#f6d7b0", ["water"])
+        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"])
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -172,7 +178,7 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 15, "swamp", "#3e443c", ["forest", "plains", "water"]
+            coordinates, age, 0, "swamp", "#3e443c", ["forest", "plains", "water"]
         )
 
     def infect(self, other: Cell) -> None:
@@ -190,9 +196,7 @@ class Snowy(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(
-            coordinates, age, 20, "snow", "#FFFAFA", ["forest", "plains", "water"]
-        )
+        super().__init__(coordinates, age, 25, "snow", "#0011ff", ["forest", "plains"])
         self.prev_type = None
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -202,7 +206,7 @@ class Snowy(Cell):
         if (
             other.type in self.submissive
             and self.age <= self.threshold_age
-            and (random.random() > 0.5 or coeff > 3)
+            and (random.random() > 0.5 or coeff > 4)
         ):
             tmp = other.type
             self._change_state(other)
@@ -227,10 +231,10 @@ class Mountain(Cell):
         super().__init__(
             coordinates,
             age,
-            40,
+            15,
             "mountain",
             "#808080",
-            ["water", "desert", "plains", "forest"],
+            ["plains"],
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -238,6 +242,6 @@ class Mountain(Cell):
         Mountain cell's infect method
         """
         if other.type in self.submissive and (
-            coeff in range(3, 9) or random.random() > 0.8
+            coeff in range(3, 6) or random.random() > 0.9
         ):
             self._change_state(other)

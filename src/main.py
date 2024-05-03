@@ -1,7 +1,9 @@
 """
 Main
 """
-from map import Grid
+
+from grid import Grid
+
 gr = Grid(5, 5, 1)
 # print(gr._map)
 gr.update_grid()

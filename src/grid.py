@@ -68,16 +68,21 @@ class Grid:
         """
         Get neighboring cells of a given cell from top, left, right and below
         """
-        res = []
-        if cell.x != 0:
-            res.append(self._map[cell.x - 1][cell.y])
-        if cell.x != self.n_rows - 1:
-            res.append(self._map[cell.x + 1][cell.y])
-        if cell.y != 0:
-            res.append(self._map[cell.x][cell.y - 1])
-        if cell.y != self.n_cols - 1:
-            res.append(self._map[cell.x][cell.y + 1])
+        res = [
+            self._map[cell.x + i][cell.y + j]
+            for i, j in [(1, 0), (-1, 0), (0, 1), (0, -1)]
+            if cell.x + i not in [-1, self.n_rows]
+            and cell.y + j not in [-1, self.n_cols]
+        ]
         return res
+
+    def revert_changed(self):
+        """
+        Revert changed to false
+        """
+        for row in self._map:
+            for cell in row:
+                cell.changed = False
 
     def update_grid(self):
         """
@@ -85,14 +90,21 @@ class Grid:
         """
         for row in self._map:
             for cell in row:
-                if cell.type in ["water", "void", "swamp"]:
-                    for neighbour in self.get_neighbours(cell):
-                        cell.infect(neighbour)
-                else:
-                    coeff = self.count_coeff(cell)
-                    for neighbour in self.get_neighbours(cell):
+                if cell.changed:
+                    continue
+                for neighbour in self.get_neighbours(cell):
+                    coeff = (
+                        None
+                        if cell.type in ["water", "void", "swamp"]
+                        else self.count_coeff(cell)
+                    )
+                    if not neighbour.changed and coeff is not None:
                         cell.infect(neighbour, coeff)
-                cell.age += 1
+                    elif not neighbour.changed:
+                        cell.infect(neighbour)
+                if cell.active:
+                    cell.age += 1
+        self.revert_changed()
 
     def to_arr_colors(self):
         """
