@@ -68,7 +68,7 @@ cell.y >= 1 else 0:cell.y+2]):
         """
         for row in self._map:
             for cell in row:
-                if type(cell) in ["water", "void"]:
+                if cell.type in ["water", "void"]:
                     for neighbour in self.get_neighbours(cell):
                         cell.infect(neighbour)
                 else:
