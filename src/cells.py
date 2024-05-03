@@ -10,7 +10,7 @@ class Cell(ABC):
     """
     Cell template class
     """
-
+    SUBTYPES: dict
     def __init__(
         self,
         coordinates: tuple[int, int],
@@ -32,6 +32,8 @@ class Cell(ABC):
         other.__class__ = self.__class__
         other.color = self.color
         other.threshold_age = self.threshold_age
+        other.type = self.type
+        other.submissive = self.submissive
 
     @abstractmethod
     def infect(self, other: "Cell") -> None:
@@ -39,6 +41,13 @@ class Cell(ABC):
         Abstract method for other
         """
 
+    def get_subtype(self):
+        """
+        Get random subtype
+        """
+        options = list(self.SUBTYPES.keys())
+        probabilities = list(self.SUBTYPES.values())
+        return random.choices(options, probabilities)[0]
 
 class Void(Cell):
     """
@@ -56,6 +65,7 @@ class Void(Cell):
         """
         return None
 
+    
 
 class Water(Cell):
     """
@@ -138,6 +148,51 @@ class Forest(Cell):
             self._change_state(other)
 
 
+class Swamp(Cell):
+    """
+    Swamp cell class
+    A cell class that represents an area of swamp type
+    """
+
+    def __init__(self, coordinates, age) -> None:
+        super().__init__(
+            coordinates, age, 15, "swamp", "", ["forest", "plains", "water"]
+        )
+
+    def infect(self, other: Cell) -> None:
+        """
+        Swamp's cell infect method
+        """
+        if other.type in self.submissive and self.age <= self.threshold_age:
+            self._change_state(other)
+
+
+class Snowy(Cell):
+    """
+    Snowy cell class
+    A cell that represents a snowy area
+    """
+
+    def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
+        super().__init__(
+            coordinates, age, 20, "snow", "#FFFAFA", ["forest", "plains", "water"]
+        )
+        self.prev_type = None
+
+    def infect(self, other: Cell, coeff: int = 0) -> None:
+        """
+        Snowy cell's infect method
+        """
+        if (
+            other.type in self.submissive
+            and self.age <= self.threshold_age
+            and (random.random() > 0.5 or coeff > 3)
+        ):
+            tmp = other.type
+            self._change_state(other)
+            other.prev_type = tmp
+
+
 class Mountain(Cell):
     """
     Mountain cell class
@@ -159,6 +214,6 @@ class Mountain(Cell):
         Mountain cell's infect method
         """
         if other.type in self.submissive and (
-            coeff in range(3, 9) or random.random > 0.8
+            coeff in range(3, 9) or random.random() > 0.8
         ):
             self._change_state(other)
