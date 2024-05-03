@@ -2,12 +2,12 @@
 Map's cells
 """
 
-from map import Grid
+import random
 
 
 class Cell:
     """
-    Map's cell class
+    Cell template class
     """
 
     def __init__(
@@ -16,36 +16,31 @@ class Cell:
         age: int = 0,
         threshold_age: int = 0,
         status: int = -1,
-        colors: list[tuple] | None = None,
+        color: str | None = None,
     ) -> None:
         self.age = age
         self.threshold_age = threshold_age
         self.priority = status
         self.x, self.y = coordinates
-        self.colors = colors
+        self.color = color
+        self.height = 0
+
+    def _change_state(self, other: "Cell"):
+        other.__class__ = self.__class__
+        other.color = self.color
+        other.threshold_age = self.threshold_age
 
     def infect(self, other: "Cell") -> None:
         """
-        ...
+        Abstract method for other
         """
         raise NotImplementedError
-
-    def get_positions(self, map_: "Grid", delta: int = 1):
-        """
-        Get cell's neighbours that can be infected
-        """
-        pos = []
-        for i, j in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            if self.x + i in [-1, map_.n_rows] or self.y + j in [-1, map_.n_cols]:
-                continue
-            if self.priority - map_[self.x + i][self.y + j].priority == delta:
-                pos.append((self.x + i, self.y + j))
-        return pos
 
 
 class Void(Cell):
     """
-    Void cell
+    Void cell class
+    An empty cell that is going to be consumed by water
     """
 
     def __init__(self, coordinates, age=0) -> None:
@@ -53,24 +48,28 @@ class Void(Cell):
 
     def infect(self, other: Cell) -> None:
         """
-        ...
+        Infect method for void cells
+        Returns nothing because Void can't infect any cell
         """
         return None
 
 
 class Water(Cell):
     """
-    Water cell
+    Water cell class
+    A cell class that represents a certain terrain filled with water
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 30, 1)
+        super().__init__(coordinates, age, 30, 1, "#1A4480")
 
     def infect(self, other: Cell) -> None:
         """
-        TODO
+        Water cell's infect method
+        Infects only the Void ones with 100% chance
         """
-        return super().infect(other)
+        if self.priority - other.priority == 1 and self.age <= self.threshold_age:
+            self._change_state(other)
 
 
 class Dirt(Cell):
@@ -81,11 +80,17 @@ class Dirt(Cell):
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 40, 2)
 
-    def infect(self, other: Cell) -> None:
+    def infect(self, other: Cell, coeff: int = 0) -> None:
         """
-        TODO
+        Dirt cell's infect method
+        Infects only water cells, with a certain chance
         """
-        return super().infect(other)
+        if (
+            self.priority - other.priority == 1
+            and random.random() + coeff**2 / 100 > 0.6
+            and self.age <= self.threshold_age
+        ):
+            self._change_state(other)
 
 
 class Grass(Cell):
@@ -94,7 +99,7 @@ class Grass(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 70, 3)
+        super().__init__(coordinates, age, 100, 3)
 
     def infect(self, other: Cell) -> None:
         """
@@ -109,7 +114,7 @@ class Stone(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 100, 4)
+        super().__init__(coordinates, age, 70, 3)
 
     def infect(self, other: Cell) -> None:
         """
@@ -124,7 +129,7 @@ class Sand(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 130, 5)
+        super().__init__(coordinates, age, 90, 3)
 
     def infect(self, other: Cell) -> None:
         """
