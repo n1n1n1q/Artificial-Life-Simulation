@@ -3,6 +3,7 @@ Map/grid class
 """
 
 from random import randint
+import numpy as np
 from cells import Void
 
 
@@ -14,9 +15,9 @@ class Grid:
     def __init__(self, n, m) -> None:
         self.n_rows = n
         self.n_cols = m
-        self._map = [
+        self._map = np.array([
             [Void((i, j), 0) for j in range(self.n_cols)] for i in range(self.n_rows)
-        ]
+        ])
         self.set_up()
 
     def set_up(self):
