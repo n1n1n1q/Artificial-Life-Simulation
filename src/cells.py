@@ -51,6 +51,8 @@ class Cell(ABC):
         probabilities = list(self.SUBTYPES.values())
         return random.choices(options, probabilities)[0]
 
+    def __repr__(self):
+        return f"{self.type} ({self.x}, {self.y})"
 
 class Void(Cell):
     """
@@ -61,7 +63,7 @@ class Void(Cell):
     SUBTYPES = {"void", 1}
 
     def __init__(self, coordinates, age=0) -> None:
-        super().__init__(coordinates, age, "void", [], "#FFFFFF")
+        super().__init__(coordinates, age, 30, "void", "#FFFFFF")
 
     def infect(self, other: Cell) -> None:
         """
@@ -168,9 +170,9 @@ class Swamp(Cell):
 
     SUBTYPES = {"swamp", 1}
 
-    def __init__(self, coordinates, age) -> None:
+    def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 15, "swamp", "", ["forest", "plains", "water"]
+            coordinates, age, 15, "swamp", "#3e443c", ["forest", "plains", "water"]
         )
 
     def infect(self, other: Cell) -> None:

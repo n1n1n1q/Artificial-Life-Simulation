@@ -25,7 +25,7 @@ class Grid:
     def __generate_seed(self):
         seed_chars = "1234567890abcdefghABCDEFGHQWERTYqwerty"
         seed = ""
-        while len(self.seed) != 20:
+        while len(seed) != 20:
             seed += random.choice(seed_chars)
         return seed
 
@@ -93,3 +93,9 @@ class Grid:
                     for neighbour in self.get_neighbours(cell):
                         cell.infect(neighbour, coeff)
                 cell.age += 1
+
+    def to_arr_colors(self):
+        """
+        Transform current array into array of colors
+        """
+        return np.array([[cell.color for cell in row] for row in self._map])
