@@ -3,9 +3,10 @@ Map's cells
 """
 
 import random
+from abc import ABC, abstractmethod
 
 
-class Cell:
+class Cell(ABC):
     """
     Cell template class
     """
@@ -15,14 +16,16 @@ class Cell:
         coordinates: tuple[int, int],
         age: int = 0,
         threshold_age: int = 0,
-        status: int = -1,
+        type_: str | None = None,
         color: str | None = None,
+        submissive: list[str] | None = None,
     ) -> None:
+        self.x, self.y = coordinates
         self.age = age
         self.threshold_age = threshold_age
-        self.priority = status
-        self.x, self.y = coordinates
+        self.type = type_
         self.color = color
+        self.submissive = submissive
         self.height = 0
 
     def _change_state(self, other: "Cell"):
@@ -30,11 +33,11 @@ class Cell:
         other.color = self.color
         other.threshold_age = self.threshold_age
 
+    @abstractmethod
     def infect(self, other: "Cell") -> None:
         """
         Abstract method for other
         """
-        raise NotImplementedError
 
 
 class Void(Cell):
@@ -44,7 +47,7 @@ class Void(Cell):
     """
 
     def __init__(self, coordinates, age=0) -> None:
-        super().__init__(coordinates, age, 0, [])
+        super().__init__(coordinates, age, "void", [], "#FFFFFF")
 
     def infect(self, other: Cell) -> None:
         """
@@ -57,82 +60,105 @@ class Void(Cell):
 class Water(Cell):
     """
     Water cell class
-    A cell class that represents a certain terrain filled with water
+    A cell class that represents a certain area filled with water
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 30, 1, "#1A4480")
+        super().__init__(coordinates, age, 30, "water", "#1A4480", ["void"])
 
     def infect(self, other: Cell) -> None:
         """
         Water cell's infect method
         Infects only the Void ones with 100% chance
         """
-        if self.priority - other.priority == 1 and self.age <= self.threshold_age:
+        if other.type in self.submissive and self.age <= self.threshold_age:
             self._change_state(other)
 
 
-class Dirt(Cell):
+class Plains(Cell):
     """
-    Dirt cell
+    Plains cell class
+    A cell class that represents an area of plains type
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 40, 2)
+        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"])
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
-        Dirt cell's infect method
-        Infects only water cells, with a certain chance
+        Plain cell's infect method
+        Infects only water cells, with a 60% + {k} chance, where k = coeff / 200
         """
         if (
-            self.priority - other.priority == 1
-            and random.random() + coeff**2 / 100 > 0.6
+            other.type in self.submissive
+            and random.random() + coeff**2 / 200 > 0.6
             and self.age <= self.threshold_age
         ):
             self._change_state(other)
 
 
-class Grass(Cell):
+class Desert(Cell):
     """
-    Grass cell
-    """
-
-    def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 100, 3)
-
-    def infect(self, other: Cell) -> None:
-        """
-        TODO
-        """
-        return super().infect(other)
-
-
-class Stone(Cell):
-    """
-    Stone cell
+    Desert cell class
+    A cell class that represents an area of desert type
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 70, 3)
+        super().__init__(coordinates, age, 50, "desert", "#f6d7b0", ["water"])
 
-    def infect(self, other: Cell) -> None:
+    def infect(self, other: Cell, coeff: int = 0) -> None:
         """
-        TODO
+        Desert cell's infect method
+        Infects only water cells, either with a 75% + {k} chance, where k = coeff / 120
         """
-        return super().infect(other)
+        if (
+            other.type in self.submissive
+            and random.random() + coeff**2 / 120 > 0.75
+            and self.age <= self.threshold_age
+        ):
+            self._change_state(other)
 
 
-class Sand(Cell):
+class Forest(Cell):
     """
-    Sand cell
+    Forest cell class
+    A cell class that represents an area of forest type
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 90, 3)
+        super().__init__(coordinates, age, 60, "forest", "#44801a", ["plains"])
 
-    def infect(self, other: Cell) -> None:
+    def infect(self, other: Cell, coeff: int = 0) -> None:
         """
-        TODO
+        Forest cell's infect method
         """
-        return super().infect(other)
+        if other.type in self.submissive and (
+            random.random() > 0.6 or coeff in range(3, 6)
+        ):
+            self._change_state(other)
+
+
+class Mountain(Cell):
+    """
+    Mountain cell class
+    A cell class that represents an area of mountain type
+    """
+
+    def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
+        super().__init__(
+            coordinates,
+            age,
+            40,
+            "mountain",
+            "#808080",
+            ["water", "desert", "plains", "forest"],
+        )
+
+    def infect(self, other: Cell, coeff: int = 0) -> None:
+        """
+        Mountain cell's infect method
+        """
+        if other.type in self.submissive and (
+            coeff in range(3, 9) or random.random > 0.8
+        ):
+            self._change_state(other)
