@@ -1,93 +1,187 @@
 """
-UI widgets
+Side panel widgets
 """
 
-from PySide6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QSlider,
+    QLineEdit,
+    QLabel
+)
 
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QColor
-from grid import Grid
+from PySide6.QtCore import Qt
 
-
-class GridWidget(QWidget):
+class SidePanelWidget(QWidget):
     """
-    Map grid widget
+    Side pannel widget
     """
 
-    MAX_AGE_THRESHOLD = 100
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self._parent = parent
+        self.sidebar_layout = QVBoxLayout()
+        self.sidebar_layout.setContentsMargins(20, 20, 20, 20)
+        self.sidebar_layout.setSpacing(20)
 
-    def __init__(self, n_rows: int, n_cols: int, seed: str | None = None) -> None:
-        super().__init__()
-        self.grid = Grid(n_rows, n_cols, seed)
-        self.n_rows = n_rows
-        self.n_cols = n_cols
-        self.grid_size = (n_rows, n_cols)
-        self.cells = []
-        self.grid_layout = QVBoxLayout()
-        self.setLayout(self.grid_layout)
+        self.seed_input_label = SeedInputLabel()
+        self.seed_input = SeedInput(self)
+        self.size_label = SizeLabel()
+        self.size_input_n = SizeField(self)
+        self.size_input_m = SizeField(self)
+        self.speed_label = SpeedLabel()
+        self.speed_slider = SpeedSlider(self)
+        self.regenerate_button = RegenerateButton(self)
+        self.start_button = ToggleButton(self)
 
-    def display_grid(self):
-        """
-        Displays grid
-        """
-        for _ in range(self.n_rows):
-            row = QHBoxLayout()
-            for _ in range(self.n_cols):
-                cell = GridCellWidget()
-                row.addWidget(cell)
-                self.cells.append(cell)
-            self.grid_layout.addLayout(row)
-        self.update_grid()
+        self.sidebar_layout.addWidget(self.seed_input_label)
+        self.sidebar_layout.addWidget(self.seed_input)
+        self.sidebar_layout.addWidget(self.size_label)
+        self.sidebar_layout.addWidget(self.size_input_n)
+        self.sidebar_layout.addWidget(self.size_input_m)
+        self.sidebar_layout.addWidget(self.speed_label)
+        self.sidebar_layout.addWidget(self.speed_slider)
+        self.sidebar_layout.addWidget(self.regenerate_button)
+        self.sidebar_layout.addWidget(self.start_button)
 
-    def update_grid(self):
-        """
-        Updates current grid
-        """
-        self.grid.update_grid()
-        for i, cell in enumerate(self.cells):
-            color = QColor(
-                self.grid[i // self.grid_size[1]][i % self.grid_size[1]].color
-            )
-            cell.set_color(color)
+        self.setLayout(self.sidebar_layout)
+        self.setMaximumWidth(300)
 
+    def validate_all_inputs(self):
+        """
+        Validate all inputs
+        """
+        return (
+            self.size_input_n.validate_input() and
+            self.size_input_m.validate_input()
+        )
 
 class ToggleButton(QPushButton):
     """
     Start/stop toggle button
     """
 
-    def __init__(self):
+    def __init__(self, parent = None):
         super().__init__("Start")
+        self._parent = parent
 
 
-class SidePanelWidget(QWidget):
+class SeedInputLabel(QLabel):
     """
-    Side pannel widgets
+    Label of the seed input window
     """
 
     def __init__(self):
+        super().__init__("Seed")
+
+
+class SeedInput(QLineEdit):
+    """
+    Seed input text field
+    """
+
+    def __init__(self, parent = None):
         super().__init__()
-        self.sidebar_layout = QVBoxLayout()
-        self.setLayout(self.sidebar_layout)
+        self._parent = parent
+        self.setMaxLength(20)
+        self.textChanged.connect(self.reset_color)
 
-        self.start_button = ToggleButton()
-        self.sidebar_layout.addWidget(self.start_button)
+    def reset_color(self):
+        """
+        Reset the background color back from red
+        """
+        self.setStyleSheet("SeedInput {}")
 
 
-class GridCellWidget(QLabel):
+class SpeedLabel(QLabel):
     """
-    Cell widget
+    Speed adjustment label
     """
 
-    def __init__(self, parent=None):
+    def __init__(self):
+        super().__init__("Generation speed")
+
+
+class SpeedSlider(QSlider):
+    """
+    Speed adjustment slider
+    """
+
+    MIN_SPEED = 50
+    MAX_SPEED = 1000
+
+    def __init__(self, parent = None):
+        super().__init__()
+        self._parent = parent
+        self.setOrientation(Qt.Horizontal)
+        self.setRange(self.MIN_SPEED, self.MAX_SPEED)
+        self.value = 300
+
+
+class RegenerateButton(QPushButton):
+    """
+    Regenerate seed button
+    """
+
+    def __init__(self, parent = None):
         super().__init__(parent)
-        self.setAutoFillBackground(True)
-        self.setAlignment(Qt.AlignCenter)
+        self._parent = parent
+        self.clicked.connect(self.on_click)
 
-    def set_color(self, color):
+    def on_click(self) -> None:
         """
-        Set color of the cell
+        Regenerate button, on click event
         """
-        palette = self.palette()
-        palette.setColor(self.backgroundRole(), color)
-        self.setPalette(palette)
+        if self._parent.validate_all_inputs():
+            grid = self._parent._parent.grid
+            size = (self._parent.size_input_n.text(), self._parent.size_input_m)
+            seed = self._parent.seed_input.text()
+            grid.clear_grid()
+            grid.grid.change_generation_size(*size)
+            grid.grid.seed = seed
+            grid.grid.set_up()
+            grid.display_grid()
+
+
+class SizeLabel(QLabel):
+    """
+    Label for the size input field
+    """
+
+    def __init__(self):
+        super().__init__("Size")
+
+
+class SizeField(QLineEdit):
+    """
+    Size input field
+    """
+
+    def __init__(self, parent = None) -> None:
+        super().__init__()
+        self._parent = parent
+        self.textChanged.connect(self.reset_color)
+
+    def reset_color(self):
+        """
+        Reset the background color back from red
+        """
+        self.setStyleSheet("SizeInput {}")
+
+    def validate_input(self):
+        """
+        Validate input
+        """
+        data = self.text()
+        if data:
+            try:
+                num = int(data)
+            except Exception:
+                self.setStyleSheet("SizeField { background-color: red; }")
+                return False
+            if num not in range(10, 101):
+                self.setStyleSheet("SizeField { background-color: red; }")
+                return False
+        return True
+

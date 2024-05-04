@@ -1,12 +1,14 @@
 """
-UI Module
+UI Opener
 """
 
 from PySide6.QtWidgets import QApplication
 from main_window import MainWindow
 
-
-if __name__ == "__main__":
+def start_ui():
+    """
+    Opens QT application
+    """
     app = QApplication([])
     window = MainWindow()
     window.show()

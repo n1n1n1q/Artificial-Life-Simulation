@@ -3,17 +3,14 @@ Main window of the UI
 """
 
 from PySide6.QtWidgets import (
-    QApplication,
     QMainWindow,
-    QLabel,
-    QVBoxLayout,
     QHBoxLayout,
-    QPushButton,
     QWidget,
 )
 
-from PySide6.QtCore import Qt, QTimer
-from widgets import ToggleButton, SidePanelWidget, GridWidget, GridCellWidget
+from PySide6.QtCore import QTimer
+from grid_ui import GridWidget
+from widgets import SidePanelWidget
 
 
 class MainWindow(QMainWindow):
@@ -21,23 +18,26 @@ class MainWindow(QMainWindow):
     Main window
     """
 
+    SPEED = 300
+
     def __init__(self) -> None:
         super().__init__()
+        self.resize(1920, 1080)
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
         self.window_layout = QHBoxLayout()
         self.central_widget.setLayout(self.window_layout)
 
-        self.side_panel = SidePanelWidget()
+        self.side_panel = SidePanelWidget(self)
         self.window_layout.addWidget(self.side_panel)
 
-        self.grid = GridWidget(50, 50)
+        self.grid = GridWidget(10, 10, parent=self)
         self.window_layout.addWidget(self.grid)
         self.grid.display_grid()
 
         self.timer = QTimer()
-        self.timer.timeout.connect(self.grid.update_grid)
+        self.timer.timeout.connect(self.grid.generate_map)
         self.is_running = False
         self.side_panel.start_button.clicked.connect(self.toggle_update)
 
@@ -49,6 +49,7 @@ class MainWindow(QMainWindow):
             self.timer.stop()
             self.side_panel.start_button.setText("Start")
         else:
-            self.timer.start(50)
+            self.timer.start(self.SPEED)
             self.side_panel.start_button.setText("Stop")
+        self.side_panel.regenerate_button.setEnabled(self.is_running)
         self.is_running = not self.is_running
