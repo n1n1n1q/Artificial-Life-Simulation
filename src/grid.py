@@ -92,12 +92,12 @@ class Grid:
             for cell in row:
                 if cell.changed:
                     continue
+                coeff = (
+                    None
+                    if cell.type in ["water", "void", "swamp"]
+                    else self.count_coeff(cell)
+                )
                 for neighbour in self.get_neighbours(cell):
-                    coeff = (
-                        None
-                        if cell.type in ["water", "void", "swamp"]
-                        else self.count_coeff(cell)
-                    )
                     if not neighbour.changed and coeff is not None:
                         cell.infect(neighbour, coeff)
                     elif not neighbour.changed:
