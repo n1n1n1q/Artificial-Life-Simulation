@@ -33,6 +33,7 @@ class Cell(ABC):
         self.active = False
 
     def _change_state(self, other: "Cell"):
+        other.age = self.age + 1
         self.active = True
         other.active = True
         other.__class__ = self.__class__

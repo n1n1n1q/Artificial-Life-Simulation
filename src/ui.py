@@ -1,8 +1,7 @@
 """
-UI module
+UI Module
 """
 
-import sys
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -22,77 +21,107 @@ class MainWindow(QMainWindow):
     Main window
     """
 
-    def __init__(self, n_rows: int, n_cols: int, seed: None | str = None):
+    def __init__(self) -> None:
         super().__init__()
-
-        self.grid_size = (n_rows, n_cols)
-        self.grid = Grid(*self.grid_size, seed)
-
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
-        self.grid_layout = QVBoxLayout()
-        self.central_widget.setLayout(self.grid_layout)
+        self.window_layout = QHBoxLayout()
+        self.central_widget.setLayout(self.window_layout)
 
-        self.create_grid_ui()
+        self.side_panel = SidePanelWidget()
+        self.window_layout.addWidget(self.side_panel)
 
-        self.update_button = QPushButton("Start")
-        self.update_button.clicked.connect(self.toggle_update)
-        self.grid_layout.addWidget(self.update_button)
+        self.grid = GridWidget(50, 50)
+        self.window_layout.addWidget(self.grid)
+        self.grid.display_grid()
 
         self.timer = QTimer()
-        self.timer.timeout.connect(self.update_grid)
-
+        self.timer.timeout.connect(self.grid.update_grid)
         self.is_running = False
-
-    def create_grid_ui(self):
-        """
-        Create grid
-        """
-        self.cell_widgets = []
-
-        for _ in range(self.grid_size[0]):
-            row_layout = QHBoxLayout()
-            for __ in range(self.grid_size[1]):
-                cell_widget = CellWidget()
-                row_layout.addWidget(cell_widget)
-                self.cell_widgets.append(cell_widget)
-            self.grid_layout.addLayout(row_layout)
-
-        self.update_grid_ui()
-
-    def update_grid_ui(self):
-        """
-        Update grid's ui
-        """
-        for i, cell_widget in enumerate(self.cell_widgets):
-            cell = self.grid[i // self.grid_size[1]][i % self.grid_size[1]]
-            color = QColor(cell.color)
-            cell_widget.set_color(color)
-
-    def update_grid(self):
-        """
-        Update grid
-        """
-        self.grid.update_grid()
-        self.update_grid_ui()
+        self.side_panel.start_button.clicked.connect(self.toggle_update)
 
     def toggle_update(self):
         """
-        Toggle update
+        Toggle button handler
         """
         if self.is_running:
             self.timer.stop()
-            self.update_button.setText("Start")
+            self.side_panel.start_button.setText("Start")
         else:
             self.timer.start(50)
-            self.update_button.setText("Stop")
+            self.side_panel.start_button.setText("Stop")
         self.is_running = not self.is_running
 
 
-class CellWidget(QLabel):
+class GridWidget(QWidget):
     """
-    Cell
+    Map grid widget
+    """
+
+    MAX_AGE_THRESHOLD = 100
+
+    def __init__(self, n_rows: int, n_cols: int, seed: str | None = None) -> None:
+        super().__init__()
+        self.grid = Grid(n_rows, n_cols, seed)
+        self.n_rows = n_rows
+        self.n_cols = n_cols
+        self.grid_size = (n_rows, n_cols)
+        self.cells = []
+        self.grid_layout = QVBoxLayout()
+        self.setLayout(self.grid_layout)
+
+    def display_grid(self):
+        """
+        Displays grid
+        """
+        for _ in range(self.n_rows):
+            row = QHBoxLayout()
+            for _ in range(self.n_cols):
+                cell = GridCellWidget()
+                row.addWidget(cell)
+                self.cells.append(cell)
+            self.grid_layout.addLayout(row)
+        self.update_grid()
+
+    def update_grid(self):
+        """
+        Updates current grid
+        """
+        self.grid.update_grid()
+        for i, cell in enumerate(self.cells):
+            color = QColor(
+                self.grid[i // self.grid_size[1]][i % self.grid_size[1]].color
+            )
+            cell.set_color(color)
+
+
+class ToggleButton(QPushButton):
+    """
+    Start/stop toggle button
+    """
+
+    def __init__(self):
+        super().__init__("Start")
+
+
+class SidePanelWidget(QWidget):
+    """
+    Side pannel widgets
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.sidebar_layout = QVBoxLayout()
+        self.setLayout(self.sidebar_layout)
+
+        self.start_button = ToggleButton()
+        self.sidebar_layout.addWidget(self.start_button)
+
+
+class GridCellWidget(QLabel):
+    """
+    Cell widget
     """
 
     def __init__(self, parent=None):
@@ -102,7 +131,7 @@ class CellWidget(QLabel):
 
     def set_color(self, color):
         """
-        Set color
+        Set color of the cell
         """
         palette = self.palette()
         palette.setColor(self.backgroundRole(), color)
@@ -111,6 +140,6 @@ class CellWidget(QLabel):
 
 if __name__ == "__main__":
     app = QApplication([])
-    window = MainWindow(50, 50)
+    window = MainWindow()
     window.show()
-    sys.exit(app.exec())
+    app.exec()
