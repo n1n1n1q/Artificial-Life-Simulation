@@ -118,7 +118,7 @@ class Plains(Cell):
         """
         if (
             other.type in self.submissive
-            and random.random() + coeff**2 / 200 > 0.6
+            and random.random() + coeff**2 / 200 > 0.8
             and self.age <= self.threshold_age
         ):
             self._change_state(other)
@@ -142,7 +142,7 @@ class Desert(Cell):
         """
         if (
             other.type in self.submissive
-            and random.random() + coeff**2 / 120 > 0.75
+            and random.random() + coeff**2 / 120 > 0.9
             and self.age <= self.threshold_age
         ):
             self._change_state(other)

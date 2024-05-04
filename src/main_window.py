@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.side_panel = SidePanelWidget(self)
         self.window_layout.addWidget(self.side_panel)
 
-        self.grid = GridWidget(10, 10, parent=self)
+        self.grid = GridWidget(30, 30, parent=self)
         self.window_layout.addWidget(self.grid)
         self.grid.display_grid()
 

@@ -117,7 +117,7 @@ class Grid:
                     cell.changed = False
                     flag = True
         if not flag:
-            self.destinations[ind] = 1
+            self.destinations[ind] = ind + 1
 
     def update_grid(self):
         """
@@ -125,7 +125,7 @@ class Grid:
         """
         if self.destinations[1]:
             return True
-        if self.destinations[1] == 1:
+        if self.destinations[0] == 1:
             self.biome_distribution()
         if not self.destinations[0]:
             self._update(0)
