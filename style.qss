@@ -1,20 +1,48 @@
+*{
+    color: #cfcfcf;
+    font-size: 18px;
+}
+
 QMainWindow {
     background-color: #262930;
     color: #cfcfcf;
     font-family: Arial, sans-serif;
 }
 
-InfoBox {
-        border-top: 2px solid #dddddd;
-        border-bottom: 2px solid #dddddd;
+GridWidget {
+    background-color: blue;
+    color: blue;
 }
 
+QLabel{
+    color: #cfcfcf;
+    font-family: Arial, sans-serif;
+    
+}
+
+Title{
+    font-size: 38px;
+    font-weight: 600;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+
+Subtitle{
+    font-size:26px;
+}
 QLineEdit {
     background-color: #1f2126;
+    font-size: 18px;
 }
 
 GridWidget {
     background-color: #1f2126;
+}
+
+
+QPushButton{
+
 }
 
 QSlider::groove:horizontal {
@@ -24,20 +52,27 @@ QSlider::groove:horizontal {
 }
 
 QSlider::handle:horizontal {
-    background: #1f2126;
-    border: 2px solid #1f2126;
-    width: 20px;
-    height: 20px;
+    background: #d9d6cf;
+    border: 2px solid #d9d6cf;
+    width: 5px;
+    height: 5px;
     margin: -8px 0;
-    border-radius: 0;
+    border-radius: 2;
 }
 
 QSlider::sub-page:horizontal {
-    background: #1f2126;
+    background: #31343b;
     border-radius: 2px;
 }
 
 QSlider::add-page:horizontal {
     background: #dddddd;
     border-radius: 2px;
+}
+
+QPushButton{
+    background-color: #1f2126;
+}
+QPushButton::hover{
+    font-size: 18px;
 }

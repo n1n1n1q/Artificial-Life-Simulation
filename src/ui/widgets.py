@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QLabel,
     QFrame,
+    QSpacerItem,
+    QSizePolicy
 )
 
 from PySide6.QtCore import Qt
@@ -26,6 +28,8 @@ class SidePanelWidget(QWidget):
         self._parent = parent
         self.sidebar_layout = QVBoxLayout()
 
+        self.main_title = Title("Terrain generation")
+        self.options_subtitle = Subtitle("Options")
         self.seed_input_label = SeedInputLabel()
         self.seed_input = SeedInput(self)
         self.size_label = SizeLabel()
@@ -44,34 +48,63 @@ class SidePanelWidget(QWidget):
         self.speed_label = SpeedLabel()
         self.speed_slider = SpeedSlider(self)
 
-        self.info_box = InfoContainer()
+        self.info_title = Subtitle("Info")
         self.info = Info(self)
-        self.info_box_layout = QVBoxLayout()
-        self.info_box_layout.addWidget(self.info)
-        self.info_box.setLayout(self.info_box_layout)
-
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
-
-        self.sidebar_layout.addWidget(
+    
+        self.top_section = QWidget()
+        self.top_layout = QVBoxLayout()
+        self.top_layout.addWidget(
+            self.main_title, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
+            self.info_title, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
+            self.info, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
+            self.options_subtitle, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
             self.seed_input_label, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.sidebar_layout.addWidget(
+        self.top_layout.addWidget(
             self.seed_input, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.sidebar_layout.addWidget(self.size_box)
-        self.sidebar_layout.addWidget(
+        self.top_layout.addWidget(
+            self.size_label, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
+            self.size_box, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.top_layout.addWidget(
             self.speed_label, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.sidebar_layout.addWidget(
+        self.top_layout.addWidget(
             self.speed_slider, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.sidebar_layout.addWidget(self.info_box)
-        self.sidebar_layout.addWidget(self.regenerate_button)
-        self.sidebar_layout.addWidget(self.start_button)
+        self.top_layout.addWidget(
+            self.regenerate_button
+        )
+        self.top_section.setLayout(self.top_layout)
 
+        self.bottom_section = QWidget()
+        self.bottom_layout = QVBoxLayout()
+        self.bottom_layout.addWidget(
+            self.start_button, alignment=Qt.AlignmentFlag.AlignBottom
+        )
+        self.bottom_section.setLayout(self.bottom_layout)
+
+        self.sidebar_layout.addWidget(
+            self.top_section
+        )
+        self.sidebar_layout.addWidget(
+            self.bottom_section
+        )
         self.setLayout(self.sidebar_layout)
-        self.setMaximumWidth(300)
+        self.setMaximumWidth(400)
         self.setMaximumHeight(1080)
 
     def validate_all_inputs(self):
@@ -80,6 +113,22 @@ class SidePanelWidget(QWidget):
         """
         return self.size_input_n.validate_input() and self.size_input_m.validate_input()
 
+
+class Subtitle(QLabel):
+    """
+    Subtitle class
+    """
+    def _init__(self, title):
+        super().__init__()
+        self.setText(title)
+
+class Title(QLabel):
+    """
+    Title class
+    """
+    def __init__(self, title):
+        super().__init__()
+        self.setText(title)
 
 class ToggleButton(QPushButton):
     """
@@ -231,17 +280,6 @@ class SizeField(QLineEdit):
                 self.setStyleSheet("SizeField { background-color: red; }")
                 return False
         return True
-
-
-class InfoContainer(QFrame):
-    """
-    Frame for info
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.setFrameShape(QFrame.Box)
-        self.setLineWidth(2)
 
 
 class Info(QLabel):
