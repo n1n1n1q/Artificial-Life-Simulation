@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QFrame,
     QSpacerItem,
-    QSizePolicy
+    QSizePolicy,
 )
 
 from PySide6.QtCore import Qt
@@ -39,9 +39,9 @@ class SidePanelWidget(QWidget):
 
         self.size_box = QWidget()
         self.size_box_layout = QHBoxLayout()
-        self.size_box_layout.addWidget(self.size_input_n)
-        self.size_box_layout.addWidget(self.by)
         self.size_box_layout.addWidget(self.size_input_m)
+        self.size_box_layout.addWidget(self.by)
+        self.size_box_layout.addWidget(self.size_input_n)
         self.size_box_layout.setContentsMargins(0, 0, 0, 0)
         self.size_box.setLayout(self.size_box_layout)
 
@@ -52,42 +52,26 @@ class SidePanelWidget(QWidget):
         self.info = Info(self)
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
-    
+
         self.top_section = QWidget()
         self.top_layout = QVBoxLayout()
-        self.top_layout.addWidget(
-            self.main_title, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.top_layout.addWidget(
-            self.info_title, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.top_layout.addWidget(
-            self.info, alignment=Qt.AlignmentFlag.AlignTop
-        )
+        self.top_layout.addWidget(self.main_title, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.info_title, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.info, alignment=Qt.AlignmentFlag.AlignTop)
         self.top_layout.addWidget(
             self.options_subtitle, alignment=Qt.AlignmentFlag.AlignTop
         )
         self.top_layout.addWidget(
             self.seed_input_label, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.top_layout.addWidget(
-            self.seed_input, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.top_layout.addWidget(
-            self.size_label, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.top_layout.addWidget(
-            self.size_box, alignment=Qt.AlignmentFlag.AlignTop
-        )
-        self.top_layout.addWidget(
-            self.speed_label, alignment=Qt.AlignmentFlag.AlignTop
-        )
+        self.top_layout.addWidget(self.seed_input, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.size_label, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.size_box, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.speed_label, alignment=Qt.AlignmentFlag.AlignTop)
         self.top_layout.addWidget(
             self.speed_slider, alignment=Qt.AlignmentFlag.AlignTop
         )
-        self.top_layout.addWidget(
-            self.regenerate_button
-        )
+        self.top_layout.addWidget(self.regenerate_button)
         self.top_section.setLayout(self.top_layout)
 
         self.bottom_section = QWidget()
@@ -97,12 +81,8 @@ class SidePanelWidget(QWidget):
         )
         self.bottom_section.setLayout(self.bottom_layout)
 
-        self.sidebar_layout.addWidget(
-            self.top_section
-        )
-        self.sidebar_layout.addWidget(
-            self.bottom_section
-        )
+        self.sidebar_layout.addWidget(self.top_section)
+        self.sidebar_layout.addWidget(self.bottom_section)
         self.setLayout(self.sidebar_layout)
         self.setMaximumWidth(400)
         self.setMaximumHeight(1080)
@@ -118,17 +98,21 @@ class Subtitle(QLabel):
     """
     Subtitle class
     """
+
     def _init__(self, title):
         super().__init__()
         self.setText(title)
+
 
 class Title(QLabel):
     """
     Title class
     """
+
     def __init__(self, title):
         super().__init__()
         self.setText(title)
+
 
 class ToggleButton(QPushButton):
     """
@@ -219,11 +203,13 @@ class RegenerateButton(QPushButton):
         """
         if self._parent.validate_all_inputs():
             grid = self._parent._parent.grid
-            size = (
-                int(self._parent.size_input_n.text()),
-                int(self._parent.size_input_m.text()),
-            )
-            print([type(i) for i in size])
+            try:
+                size = (
+                    int(self._parent.size_input_n.text()),
+                    int(self._parent.size_input_m.text()),
+                )
+            except ValueError:
+                size = grid.n_rows, grid.n_cols
             self._parent._parent.grid.n_rows, self._parent._parent.grid.n_cols = size
             seed = (
                 self._parent.seed_input.text()

@@ -157,15 +157,18 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"])
+        super().__init__(coordinates, age, 5, "forest", "#44801a", ["plains"])
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Forest cell's infect method
         """
-        if other.type in self.submissive and (
-            random.random() > 0.9 or coeff in range(2, 3)
+        if (
+            other.type in self.submissive
+            and (random.random() > 0.7 or coeff in range(0, 3))
+            and self.age <= self.threshold_age
         ):
+            print(coeff)
             self._change_state(other)
 
 

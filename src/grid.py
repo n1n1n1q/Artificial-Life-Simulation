@@ -20,6 +20,7 @@ class Grid:
         self._m = m
         self.seed = seed if seed else self.generate_seed()
         self.destinations = [0, 0]
+        self.scaling_coeff = (n * m) / (60 * 60)
         self.set_up()
 
     def __getitem__(self, i):
@@ -58,6 +59,7 @@ class Grid:
                 continue
             used.add(new)
             self._map[new[0]][new[1]] = stack.pop()(new)
+            self._map[new[0]][new[1]].threshold_age *= self.scaling_coeff
 
     def biome_distribution(self):
         """
@@ -78,6 +80,7 @@ class Grid:
                 curr.x, curr.y = new
                 used.add(new)
                 self._map[new[0]][new[1]] = curr
+                self._map[new[0]][new[1]].threshold_age *= self.scaling_coeff
                 break
 
     def count_coeff(self, cell: "Cell"):

@@ -85,7 +85,7 @@ class GridCellWidget(QLabel):
     def __init__(self, parent=None, grid_width=None, grid_height=None):
         super().__init__()
         self._parent = parent
-        min_side = min(1400/grid_width, 900/grid_height)
+        min_side = min(1400 / grid_width, 900 / grid_height)
         self.setFixedSize(min_side, min_side)
         self.setAutoFillBackground(True)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
