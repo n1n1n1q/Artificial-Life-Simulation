@@ -70,7 +70,7 @@ class Void(Cell):
     SUBTYPES = {"void", 1}
 
     def __init__(self, coordinates, age=0) -> None:
-        super().__init__(coordinates, age, 30, "void", "#FFFFFF")
+        super().__init__(coordinates, age, 30, "void", "#181a1f")
 
     def infect(self, other: Cell) -> None:
         """
@@ -157,14 +157,14 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 60, "forest", "#44801a", ["plains"])
+        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"])
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Forest cell's infect method
         """
         if other.type in self.submissive and (
-            random.random() > 0.6 or coeff in range(3, 6)
+            random.random() > 0.9 or coeff in range(2, 3)
         ):
             self._change_state(other)
 
@@ -179,7 +179,7 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 0, "swamp", "#3e443c", ["forest", "plains", "water"]
+            coordinates, age, 3, "swamp", "#3e443c", ["forest", "plains", "water"]
         )
 
     def infect(self, other: Cell) -> None:
@@ -197,7 +197,7 @@ class Snowy(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 25, "snow", "#0011ff", ["forest", "plains"])
+        super().__init__(coordinates, age, 5, "snow", "#FFFFFF", ["forest", "plains"])
         self.prev_type = None
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -232,7 +232,7 @@ class Mountain(Cell):
         super().__init__(
             coordinates,
             age,
-            15,
+            4,
             "mountain",
             "#808080",
             ["plains"],
@@ -242,7 +242,9 @@ class Mountain(Cell):
         """
         Mountain cell's infect method
         """
-        if other.type in self.submissive and (
-            coeff in range(3, 6) or random.random() > 0.9
+        if (
+            other.type in self.submissive
+            and self.age <= self.threshold_age
+            and (coeff in range(1, 3) or random.random() > 0.9)
         ):
             self._change_state(other)

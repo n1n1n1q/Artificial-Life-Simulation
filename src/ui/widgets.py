@@ -5,64 +5,88 @@ Side panel widgets
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
+    QHBoxLayout,
     QPushButton,
     QSlider,
     QLineEdit,
-    QLabel
+    QLabel,
+    QFrame,
 )
 
 from PySide6.QtCore import Qt
+
 
 class SidePanelWidget(QWidget):
     """
     Side pannel widget
     """
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self._parent = parent
         self.sidebar_layout = QVBoxLayout()
-        self.sidebar_layout.setContentsMargins(20, 20, 20, 20)
-        self.sidebar_layout.setSpacing(20)
 
         self.seed_input_label = SeedInputLabel()
         self.seed_input = SeedInput(self)
         self.size_label = SizeLabel()
         self.size_input_n = SizeField(self)
+        self.by = QLabel("x")
         self.size_input_m = SizeField(self)
+
+        self.size_box = QWidget()
+        self.size_box_layout = QHBoxLayout()
+        self.size_box_layout.addWidget(self.size_input_n)
+        self.size_box_layout.addWidget(self.by)
+        self.size_box_layout.addWidget(self.size_input_m)
+        self.size_box_layout.setContentsMargins(0, 0, 0, 0)
+        self.size_box.setLayout(self.size_box_layout)
+
         self.speed_label = SpeedLabel()
         self.speed_slider = SpeedSlider(self)
+
+        self.info_box = InfoContainer()
+        self.info = Info(self)
+        self.info_box_layout = QVBoxLayout()
+        self.info_box_layout.addWidget(self.info)
+        self.info_box.setLayout(self.info_box_layout)
+
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
 
-        self.sidebar_layout.addWidget(self.seed_input_label)
-        self.sidebar_layout.addWidget(self.seed_input)
-        self.sidebar_layout.addWidget(self.size_label)
-        self.sidebar_layout.addWidget(self.size_input_n)
-        self.sidebar_layout.addWidget(self.size_input_m)
-        self.sidebar_layout.addWidget(self.speed_label)
-        self.sidebar_layout.addWidget(self.speed_slider)
+        self.sidebar_layout.addWidget(
+            self.seed_input_label, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.sidebar_layout.addWidget(
+            self.seed_input, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.sidebar_layout.addWidget(self.size_box)
+        self.sidebar_layout.addWidget(
+            self.speed_label, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.sidebar_layout.addWidget(
+            self.speed_slider, alignment=Qt.AlignmentFlag.AlignTop
+        )
+        self.sidebar_layout.addWidget(self.info_box)
         self.sidebar_layout.addWidget(self.regenerate_button)
         self.sidebar_layout.addWidget(self.start_button)
 
         self.setLayout(self.sidebar_layout)
         self.setMaximumWidth(300)
+        self.setMaximumHeight(1080)
 
     def validate_all_inputs(self):
         """
         Validate all inputs
         """
-        return (
-            self.size_input_n.validate_input() and
-            self.size_input_m.validate_input()
-        )
+        return self.size_input_n.validate_input() and self.size_input_m.validate_input()
+
 
 class ToggleButton(QPushButton):
     """
     Start/stop toggle button
     """
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__("Start")
         self._parent = parent
 
@@ -74,6 +98,7 @@ class SeedInputLabel(QLabel):
 
     def __init__(self):
         super().__init__("Seed")
+        self.setContentsMargins(0, 0, 0, 0)
 
 
 class SeedInput(QLineEdit):
@@ -81,7 +106,7 @@ class SeedInput(QLineEdit):
     Seed input text field
     """
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__()
         self._parent = parent
         self.setMaxLength(20)
@@ -101,6 +126,7 @@ class SpeedLabel(QLabel):
 
     def __init__(self):
         super().__init__("Generation speed")
+        self.setContentsMargins(0, 0, 0, 0)
 
 
 class SpeedSlider(QSlider):
@@ -111,12 +137,21 @@ class SpeedSlider(QSlider):
     MIN_SPEED = 50
     MAX_SPEED = 1000
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__()
         self._parent = parent
         self.setOrientation(Qt.Horizontal)
         self.setRange(self.MIN_SPEED, self.MAX_SPEED)
-        self.value = 300
+        self.setValue(300)
+        self.valueChanged.connect(self.update_info)
+
+    def update_info(self):
+        """
+        Update info's speed val
+        """
+        info = self._parent.info
+        info.speed = self.value()
+        info.update_text()
 
 
 class RegenerateButton(QPushButton):
@@ -124,8 +159,8 @@ class RegenerateButton(QPushButton):
     Regenerate seed button
     """
 
-    def __init__(self, parent = None):
-        super().__init__(parent)
+    def __init__(self, parent=None):
+        super().__init__("Regenerate")
         self._parent = parent
         self.clicked.connect(self.on_click)
 
@@ -135,13 +170,24 @@ class RegenerateButton(QPushButton):
         """
         if self._parent.validate_all_inputs():
             grid = self._parent._parent.grid
-            size = (self._parent.size_input_n.text(), self._parent.size_input_m)
-            seed = self._parent.seed_input.text()
-            grid.clear_grid()
-            grid.grid.change_generation_size(*size)
-            grid.grid.seed = seed
-            grid.grid.set_up()
-            grid.display_grid()
+            size = (
+                int(self._parent.size_input_n.text()),
+                int(self._parent.size_input_m.text()),
+            )
+            print([type(i) for i in size])
+            self._parent._parent.grid.n_rows, self._parent._parent.grid.n_cols = size
+            seed = (
+                self._parent.seed_input.text()
+                if self._parent.seed_input.text()
+                else grid.grid.generate_seed()
+            )
+            info = self._parent.info
+            info.seed = seed
+            info.size = size
+            info.update_text()
+
+            grid.setParent(None)
+            self._parent._parent.init_grid(size, seed)
 
 
 class SizeLabel(QLabel):
@@ -151,6 +197,7 @@ class SizeLabel(QLabel):
 
     def __init__(self):
         super().__init__("Size")
+        self.setContentsMargins(0, 0, 0, 0)
 
 
 class SizeField(QLineEdit):
@@ -158,7 +205,7 @@ class SizeField(QLineEdit):
     Size input field
     """
 
-    def __init__(self, parent = None) -> None:
+    def __init__(self, parent=None) -> None:
         super().__init__()
         self._parent = parent
         self.textChanged.connect(self.reset_color)
@@ -173,7 +220,7 @@ class SizeField(QLineEdit):
         """
         Validate input
         """
-        data = self.text()
+        data = self.text().strip()
         if data:
             try:
                 num = int(data)
@@ -185,3 +232,36 @@ class SizeField(QLineEdit):
                 return False
         return True
 
+
+class InfoContainer(QFrame):
+    """
+    Frame for info
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.setFrameShape(QFrame.Box)
+        self.setLineWidth(2)
+
+
+class Info(QLabel):
+    """
+    Info class
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._parent = parent
+        self.seed = None
+        self.size = None
+        self.speed = None
+
+    def update_text(self):
+        """
+        Update info text
+        """
+        self.setText(
+            f"""Seed = {self.seed}
+Map's size: {self.size[0]}x{self.size[1]}
+Speed: {self.speed}"""
+        )

@@ -1,9 +1,12 @@
 """
-UI Opener
+Ui init
 """
 
+import sys
+
 from PySide6.QtWidgets import QApplication
-from main_window import MainWindow
+from ui.main_window import MainWindow
+
 
 def start_ui():
     """
@@ -11,5 +14,7 @@ def start_ui():
     """
     app = QApplication([])
     window = MainWindow()
+    with open("style.qss", "r", encoding="utf-8") as f:
+        app.setStyleSheet(f.read())
     window.show()
-    app.exec()
+    sys.exit(app.exec())

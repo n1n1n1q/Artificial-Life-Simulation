@@ -1,0 +1,43 @@
+QMainWindow {
+    background-color: #262930;
+    color: #cfcfcf;
+    font-family: Arial, sans-serif;
+}
+
+InfoBox {
+        border-top: 2px solid #dddddd;
+        border-bottom: 2px solid #dddddd;
+}
+
+QLineEdit {
+    background-color: #1f2126;
+}
+
+GridWidget {
+    background-color: #1f2126;
+}
+
+QSlider::groove:horizontal {
+    background: #1f2126;
+    height: 4px;
+    border-radius: 2px;
+}
+
+QSlider::handle:horizontal {
+    background: #1f2126;
+    border: 2px solid #1f2126;
+    width: 20px;
+    height: 20px;
+    margin: -8px 0;
+    border-radius: 0;
+}
+
+QSlider::sub-page:horizontal {
+    background: #1f2126;
+    border-radius: 2px;
+}
+
+QSlider::add-page:horizontal {
+    background: #dddddd;
+    border-radius: 2px;
+}

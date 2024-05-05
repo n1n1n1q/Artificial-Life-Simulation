@@ -18,14 +18,14 @@ class Grid:
         self.n_cols = m
         self._n = n
         self._m = m
-        self.seed = seed if seed else self.__generate_seed()
+        self.seed = seed if seed else self.generate_seed()
         self.destinations = [0, 0]
         self.set_up()
 
     def __getitem__(self, i):
         return self._map[i]
 
-    def __generate_seed(self):
+    def generate_seed(self):
         seed_chars = "1234567890abcdefghABCDEFGHQWERTYqwerty"
         seed = ""
         while len(seed) != 20:
@@ -43,6 +43,7 @@ class Grid:
         Set the map up
         """
         random.seed(self.seed)
+        self.n_rows, self.n_cols = self._n, self._m
         self._map = np.array(
             [[Void((i, j), 0) for j in range(self._m)] for i in range(self._n)]
         )
@@ -78,6 +79,7 @@ class Grid:
                 used.add(new)
                 self._map[new[0]][new[1]] = curr
                 break
+
     def count_coeff(self, cell: "Cell"):
         """
         Count the number of neighboring cells of the same type in square 3x3
@@ -129,11 +131,10 @@ class Grid:
             self.biome_distribution()
         if not self.destinations[0]:
             self._update(0)
-            print("Updating 1")
         else:
             self._update(1)
-            print(self.destinations)
         return False
+
     def _update(self, ind):
         for row in self._map:
             for cell in row:
