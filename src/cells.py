@@ -127,6 +127,7 @@ class Plains(Cell):
         ):
             self._change_state(other)
 
+
 class Desert(Cell):
     """
     Desert cell class

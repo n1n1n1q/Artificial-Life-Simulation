@@ -22,7 +22,7 @@ class Grid:
         self.destinations = [0, 0]
         self.scaling_coeff = (n * m) / (60 * 60)
         if self.scaling_coeff < 0.8:
-            self.scaling_coeff += (1-self.scaling_coeff)/((self._n+self._m)/10)
+            self.scaling_coeff += (1 - self.scaling_coeff) / ((self._n + self._m) / 10)
         self.set_up()
 
     def __getitem__(self, i):
@@ -83,7 +83,13 @@ class Grid:
                 if (
                     curr.type == "swamp"
                     and self._map[new[0]][new[1]].type == "water"
-                    and not len([i for i in self.get_neighbours(self._map[new[0]][new[1]]) if i.type != "water"])
+                    and not len(
+                        [
+                            i
+                            for i in self.get_neighbours(self._map[new[0]][new[1]])
+                            if i.type != "water"
+                        ]
+                    )
                 ):
                     continue
                 curr.x, curr.y = new
@@ -129,6 +135,8 @@ class Grid:
             for cell in row:
                 if cell.changed:
                     cell.changed = False
+                    flag = True
+                if cell.type != "water" and cell.age <= cell.threshold_age:
                     flag = True
         if not flag:
             self.destinations[ind] = ind + 1
