@@ -21,6 +21,8 @@ class Grid:
         self.seed = seed if seed else self.generate_seed()
         self.destinations = [0, 0]
         self.scaling_coeff = (n * m) / (60 * 60)
+        if self.scaling_coeff < 0.8:
+            self.scaling_coeff += (1-self.scaling_coeff)/((self._n+self._m)/10)
         self.set_up()
 
     def __getitem__(self, i):
@@ -70,12 +72,19 @@ class Grid:
         used = set()
         while stack:
             curr = stack.pop()((-1, -1))
+            print(curr)
             while 1:
                 new = (
                     random.randint(0, self.n_rows - 1),
                     random.randint(0, self.n_cols - 1),
                 )
                 if new in used or self._map[new[0]][new[1]].type not in curr.submissive:
+                    continue
+                if (
+                    curr.type == "swamp"
+                    and self._map[new[0]][new[1]].type == "water"
+                    and not len([i for i in self.get_neighbours(self._map[new[0]][new[1]]) if i.type != "water"])
+                ):
                     continue
                 curr.x, curr.y = new
                 used.add(new)

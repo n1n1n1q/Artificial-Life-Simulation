@@ -120,9 +120,12 @@ class Plains(Cell):
             other.type in self.submissive
             and random.random() + coeff**2 / 200 > 0.8
             and self.age <= self.threshold_age
+        ) or (
+            other.type == "desert"
+            and random.random() + coeff**2 / 200 > 0.99
+            and self.age <= self.threshold_age
         ):
             self._change_state(other)
-
 
 class Desert(Cell):
     """
@@ -157,7 +160,7 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 5, "forest", "#44801a", ["plains"])
+        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"])
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -182,14 +185,18 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 3, "swamp", "#3e443c", ["forest", "plains", "water"]
+            coordinates, age, 5, "swamp", "#3e443c", ["forest", "plains", "water"]
         )
 
-    def infect(self, other: Cell) -> None:
+    def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Swamp's cell infect method
         """
-        if other.type in self.submissive and self.age <= self.threshold_age:
+        if (
+            other.type in self.submissive
+            and (random.random() > 0.9 or coeff in range(0, 3))
+            and self.age <= self.threshold_age
+        ):
             self._change_state(other)
 
 

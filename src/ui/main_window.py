@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         Init grid
         """
         self.grid = GridWidget(*size, seed=seed, parent=self)
-        self.window_layout.addWidget(self.grid)
+        self.window_layout.addWidget(self.grid, alignment=Qt.AlignmentFlag.AlignTop)
         self.grid.display_grid()
         self.timer = QTimer()
         self.timer.timeout.connect(self.grid.generate_map)
