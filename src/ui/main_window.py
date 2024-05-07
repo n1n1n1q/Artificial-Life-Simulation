@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
     Main window
     """
 
-    SPEED = 300
+    DELAY = 300
 
     def __init__(self) -> None:
         super().__init__()
@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
 
         self.side_panel.info.seed = self.grid.grid.seed
         self.side_panel.info.size = (self.grid.n_rows, self.grid.n_cols)
-        self.side_panel.info.speed = self.side_panel.speed_slider.value()
+        self.side_panel.info.delay = self.side_panel.delay_slider.value()
         self.side_panel.info.update_text()
 
         self.is_running = False
@@ -55,11 +55,11 @@ class MainWindow(QMainWindow):
             self.timer.stop()
             self.side_panel.start_button.setText("Start")
         else:
-            self.change_speed(self.side_panel.speed_slider.value())
-            self.timer.start(self.SPEED)
+            self.change_speed(self.side_panel.delay_slider.value())
+            self.timer.start(self.DELAY)
             self.side_panel.start_button.setText("Stop")
         self.side_panel.regenerate_button.setEnabled(self.is_running)
-        self.side_panel.speed_slider.setEnabled(self.is_running)
+        self.side_panel.delay_slider.setEnabled(self.is_running)
         self.is_running = not self.is_running
 
     def init_grid(self, size, seed):
@@ -77,4 +77,4 @@ class MainWindow(QMainWindow):
         """
         ...
         """
-        cls.SPEED = new
+        cls.DELAY = new

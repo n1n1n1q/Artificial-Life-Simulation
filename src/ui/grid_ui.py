@@ -15,7 +15,7 @@ class GridWidget(QWidget):
     Map grid widget
     """
 
-    SPEED = 300
+    DELAY = 300
 
     def __init__(
         self, n_rows: int, n_cols: int, seed: str | None = None, parent=None

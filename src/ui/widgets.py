@@ -45,8 +45,8 @@ class SidePanelWidget(QWidget):
         self.size_box_layout.setContentsMargins(0, 0, 0, 0)
         self.size_box.setLayout(self.size_box_layout)
 
-        self.speed_label = SpeedLabel()
-        self.speed_slider = SpeedSlider(self)
+        self.delay_label = DelayLabel()
+        self.delay_slider = DelaySlider(self)
 
         self.info_title = Subtitle("Info")
         self.info = Info(self)
@@ -67,9 +67,9 @@ class SidePanelWidget(QWidget):
         self.top_layout.addWidget(self.seed_input, alignment=Qt.AlignmentFlag.AlignTop)
         self.top_layout.addWidget(self.size_label, alignment=Qt.AlignmentFlag.AlignTop)
         self.top_layout.addWidget(self.size_box, alignment=Qt.AlignmentFlag.AlignTop)
-        self.top_layout.addWidget(self.speed_label, alignment=Qt.AlignmentFlag.AlignTop)
+        self.top_layout.addWidget(self.delay_label, alignment=Qt.AlignmentFlag.AlignTop)
         self.top_layout.addWidget(
-            self.speed_slider, alignment=Qt.AlignmentFlag.AlignTop
+            self.delay_slider, alignment=Qt.AlignmentFlag.AlignTop
         )
         self.top_layout.addWidget(self.regenerate_button)
         self.top_section.setLayout(self.top_layout)
@@ -152,38 +152,38 @@ class SeedInput(QLineEdit):
         self.setStyleSheet("SeedInput {}")
 
 
-class SpeedLabel(QLabel):
+class DelayLabel(QLabel):
     """
-    Speed adjustment label
+    Delay adjustment label
     """
 
     def __init__(self):
-        super().__init__("Generation speed")
+        super().__init__("Generation delay")
         self.setContentsMargins(0, 0, 0, 0)
 
 
-class SpeedSlider(QSlider):
+class DelaySlider(QSlider):
     """
-    Speed adjustment slider
+    Delay adjustment slider
     """
 
-    MIN_SPEED = 50
-    MAX_SPEED = 1000
+    MIN_DELAY = 50
+    MAX_DELAY = 1000
 
     def __init__(self, parent=None):
         super().__init__()
         self._parent = parent
         self.setOrientation(Qt.Horizontal)
-        self.setRange(self.MIN_SPEED, self.MAX_SPEED)
+        self.setRange(self.MIN_DELAY, self.MAX_DELAY)
         self.setValue(300)
         self.valueChanged.connect(self.update_info)
 
     def update_info(self):
         """
-        Update info's speed val
+        Update info's delay val
         """
         info = self._parent.info
-        info.speed = self.value()
+        info.delay = self.value()
         info.update_text()
 
 
@@ -278,7 +278,7 @@ class Info(QLabel):
         self._parent = parent
         self.seed = None
         self.size = None
-        self.speed = None
+        self.delay = None
 
     def update_text(self):
         """
@@ -287,5 +287,5 @@ class Info(QLabel):
         self.setText(
             f"""Seed = {self.seed}
 Map's size: {self.size[0]}x{self.size[1]}
-Speed: {self.speed}"""
+Delay: {self.delay}"""
         )
