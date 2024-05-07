@@ -4,6 +4,7 @@ Map's cells
 
 import random
 from abc import ABC, abstractmethod
+from matplotlib import colors
 
 
 class Cell(ABC):
@@ -26,18 +27,24 @@ class Cell(ABC):
         self.age = age
         self.threshold_age = threshold_age
         self.type = type_
-        self.color = color
+        self._color = color
         self.submissive = submissive
-        self.height = 0
+        self.height = 10
         self.changed = False
         self.active = False
 
     def _change_state(self, other: "Cell"):
         other.age = self.age + 1
+        ran = random.random()
+        if self.type != 'water':
+            if ran < 0.2:
+                other.height -= 1
+            elif ran > 0.8:
+                other.height += 1
         self.active = True
         other.active = True
         other.__class__ = self.__class__
-        other.color = self.color
+        other._color = self._color
         other.threshold_age = self.threshold_age
         other.type = self.type
         other.submissive = self.submissive
@@ -56,6 +63,16 @@ class Cell(ABC):
         options = list(self.SUBTYPES.keys())
         probabilities = list(self.SUBTYPES.values())
         return random.choices(options, probabilities)[0]
+
+    @property
+    def color(self):
+        '''Calculates the color of the cell based on its type and height'''
+        if self.type == 'water':
+            return self._color
+        rgb = colors.hex2color(self._color)
+        rgb = (min(max(rgb[0]+(self.height-10)/100, 0), 1), \
+min(max(rgb[1]+(self.height-10)/100, 0), 1), min(max(rgb[2]+(self.height-10)/100, 0), 1))
+        return colors.to_hex(rgb)
 
     def __repr__(self):
         return f"{self.type} ({self.x}, {self.y})"
