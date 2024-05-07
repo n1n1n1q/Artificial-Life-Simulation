@@ -186,7 +186,7 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 5, "swamp", "#3e443c", ["forest", "plains", "water"]
+            coordinates, age, 10, "swamp", "#3e443c", ["forest", "plains", "water"]
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -195,7 +195,7 @@ class Swamp(Cell):
         """
         if (
             other.type in self.submissive
-            and (random.random() > 0.9 or coeff in range(0, 3))
+            and (random.random() > 0.9 or coeff in range(1, 3))
             and self.age <= self.threshold_age
         ):
             self._change_state(other)
@@ -208,7 +208,7 @@ class Snowy(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 5, "snow", "#FFFFFF", ["forest", "plains"])
+        super().__init__(coordinates, age, 7, "snow", "#FFFFFF", ["forest", "plains"])
         self.prev_type = None
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -218,7 +218,7 @@ class Snowy(Cell):
         if (
             other.type in self.submissive
             and self.age <= self.threshold_age
-            and (random.random() > 0.5 or coeff > 4)
+            and (random.random() > 0.5 or coeff in range(1,3))
         ):
             tmp = other.type
             self._change_state(other)
@@ -243,7 +243,7 @@ class Mountain(Cell):
         super().__init__(
             coordinates,
             age,
-            4,
+            7,
             "mountain",
             "#808080",
             ["plains"],
@@ -256,6 +256,6 @@ class Mountain(Cell):
         if (
             other.type in self.submissive
             and self.age <= self.threshold_age
-            and (coeff in range(1, 3) or random.random() > 0.9)
+            and (coeff in range(1, 3) or random.random() > 0.7)
         ):
             self._change_state(other)
