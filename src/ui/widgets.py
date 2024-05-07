@@ -2,6 +2,7 @@
 Side panel widgets
 """
 
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -52,6 +53,7 @@ class SidePanelWidget(QWidget):
         self.info = Info(self)
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
+        self.textures_button = ApplyTexturesButton(self)
 
         self.top_section = QWidget()
         self.top_layout = QVBoxLayout()
@@ -76,8 +78,12 @@ class SidePanelWidget(QWidget):
 
         self.bottom_section = QWidget()
         self.bottom_layout = QVBoxLayout()
+        self.bottom_layout.setSpacing(30)
         self.bottom_layout.addWidget(
             self.start_button, alignment=Qt.AlignmentFlag.AlignBottom
+        )
+        self.bottom_layout.addWidget(
+            self.textures_button, alignment=Qt.AlignmentFlag.AlignBottom
         )
         self.bottom_section.setLayout(self.bottom_layout)
 
@@ -222,6 +228,7 @@ class RegenerateButton(QPushButton):
             info.update_text()
 
             grid.setParent(None)
+            self._parent.textures_button.setEnabled(False)
             self._parent._parent.init_grid(size, seed)
 
 
@@ -289,3 +296,30 @@ class Info(QLabel):
 Map's size: {self.size[1]}x{self.size[0]}
 Delay: {self.delay}"""
         )
+
+
+class ApplyTexturesButton(QPushButton):
+    """
+    Tuxtures application button
+    """
+    def __init__(self, parent):
+        super().__init__("Apply textures")
+        self._parent = parent
+        self.setEnabled(False)
+        self.clicked.connect(self.on_click)
+
+    def on_click(self):
+        """
+        Apply textures, on click event
+        """
+        grid = self._parent._parent.grid
+        for i, cell_ in enumerate(grid.cells):
+            cell_.setPixmap(QPixmap())
+            cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
+            if cell.type == "grass":
+                subtype = random.choices(list(cell.SUBTYPES.keys()), weights=list(cell.SUBTYPES.values()))[0]
+                if subtype == "grassy":
+                    texture_path = f"assets/grass/grassy.png"
+                    cell_.set_texture(texture_path)
+            if cell.type == "desert":
+                cell_.set_texture("assets/desert/cacti.png")

@@ -2,10 +2,12 @@
 Grid widget and grid cell widget
 """
 
+import random
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPixmap
 
 from grid import Grid
 
@@ -75,7 +77,7 @@ class GridWidget(QWidget):
         self.update_grid()
         if is_stopped:
             self._parent.toggle_update()
-
+            self._parent.side_panel.textures_button.setEnabled(True)
 
 class GridCellWidget(QLabel):
     """
@@ -97,3 +99,11 @@ class GridCellWidget(QLabel):
         palette = self.palette()
         palette.setColor(self.backgroundRole(), color)
         self.setPalette(palette)
+
+    def set_texture(self, filepath):
+        """
+        Set texture to cell
+        """
+        pixmap = QPixmap(filepath)
+        self.setPixmap(pixmap)
+        self.setScaledContents(True)

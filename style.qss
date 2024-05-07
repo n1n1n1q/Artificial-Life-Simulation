@@ -17,7 +17,7 @@ GridWidget {
 QLabel{
     color: #cfcfcf;
     font-family: Arial, sans-serif;
-    
+
 }
 
 Title{
@@ -38,11 +38,6 @@ QLineEdit {
 
 GridWidget {
     background-color: #1f2126;
-}
-
-
-QPushButton{
-
 }
 
 QSlider::groove:horizontal {
@@ -73,6 +68,11 @@ QSlider::add-page:horizontal {
 QPushButton{
     background-color: #1f2126;
 }
+
+QPushButton::disabled{
+    color: #848484;
+}
+
 QPushButton::hover{
     font-size: 18px;
 }
