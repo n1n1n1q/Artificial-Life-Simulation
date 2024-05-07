@@ -286,6 +286,6 @@ class Info(QLabel):
         """
         self.setText(
             f"""Seed = {self.seed}
-Map's size: {self.size[0]}x{self.size[1]}
+Map's size: {self.size[1]}x{self.size[0]}
 Delay: {self.delay}"""
         )

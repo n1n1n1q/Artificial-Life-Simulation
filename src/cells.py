@@ -6,7 +6,6 @@ import random
 from abc import ABC, abstractmethod
 from matplotlib import colors
 
-
 class Cell(ABC):
     """
     Cell template class
@@ -62,8 +61,11 @@ class Cell(ABC):
         """
         options = list(self.SUBTYPES.keys())
         probabilities = list(self.SUBTYPES.values())
-        return random.choices(options, probabilities)[0]
-
+        sub = random.choices(options, probabilities)[0]
+        return sub
+        # if 1 - self.SUBTYPES[sub] >= random.random():
+        #     return sub
+        # return "regular"
     @property
     def color(self):
         '''Calculates the color of the cell based on its type and height'''
@@ -103,7 +105,7 @@ class Water(Cell):
     A cell class that represents a certain area filled with water
     """
 
-    SUBTYPES = {"cold": 0.5, "warm": 0.5}
+    SUBTYPES = {"wavy": 0.7, "ship": 0.3}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"])
@@ -151,7 +153,7 @@ class Desert(Cell):
     A cell class that represents an area of desert type
     """
 
-    SUBTYPES = {"cacti": 0.5, "wasteland": 0.495, "pyramid": 0.015}
+    SUBTYPES = {"cacti": 0.7, "wasteland": 0.295, "pyramid": 0.015}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"])

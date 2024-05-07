@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
             self.side_panel, alignment=Qt.AlignmentFlag.AlignTop
         )
 
-        self.init_grid((60, 60), None)
+        self.init_grid((28, 43), None)
 
         self.side_panel.info.seed = self.grid.grid.seed
         self.side_panel.info.size = (self.grid.n_rows, self.grid.n_cols)
