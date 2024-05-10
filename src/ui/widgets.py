@@ -312,14 +312,26 @@ class ApplyTexturesButton(QPushButton):
         """
         Apply textures, on click event
         """
+        large_subtypes = ["pyramid"]
         grid = self._parent._parent.grid
         for i, cell_ in enumerate(grid.cells):
-            cell_.setPixmap(QPixmap())
             cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
-            if cell.type == "grass":
-                subtype = random.choices(list(cell.SUBTYPES.keys()), weights=list(cell.SUBTYPES.values()))[0]
-                if subtype == "grassy":
-                    texture_path = f"assets/grass/grassy.png"
+            if cell.texture:
+                continue
+            cell_.setPixmap(QPixmap())
+            texture_neighbours = [n for n in grid.grid.get_adjacent(cell) if n.type == cell.type and n.texture]
+            if len(texture_neighbours) == 0:
+                subtype = cell.get_subtype()
+                if subtype in large_subtypes and grid.grid.large_texture(cell):
+                    cells_directions = [0, 1, grid.n_cols, grid.n_cols + 1]
+                    for n, c in enumerate(cells_directions):
+                        curr_cell = grid.cells[i + c]
+                        texture_path = f"assets/{cell.type}/{subtype}{n + 1}.png"
+                        curr_cell.set_texture(texture_path)
+                    cells = [(0, 0), (0, 1), (1, 0), (1, 1)]
+                    for n, m in cells:
+                        grid.grid[cell.x + n][cell.y + m].texture = True
+                else:
+                    texture_path = f"assets/{cell.type}/{subtype}.png"
                     cell_.set_texture(texture_path)
-            if cell.type == "desert":
-                cell_.set_texture("assets/desert/cacti.png")
+                    cell.texture = True

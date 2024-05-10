@@ -31,6 +31,7 @@ class Cell(ABC):
         self.height = 10
         self.changed = False
         self.active = False
+        self.texture = False
 
     def _change_state(self, other: "Cell"):
         other.age = self.age + 1
@@ -153,7 +154,7 @@ class Desert(Cell):
     A cell class that represents an area of desert type
     """
 
-    SUBTYPES = {"cacti": 0.7, "wasteland": 0.295, "pyramid": 0.015}
+    SUBTYPES = {"cacti": 0.7, "wasteland": 0.295, "pyramid": 1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"])
@@ -201,7 +202,7 @@ class Swamp(Cell):
     A cell class that represents an area of swamp type
     """
 
-    SUBTYPES = {"swamp", 1}
+    SUBTYPES = {"swamp": 1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(

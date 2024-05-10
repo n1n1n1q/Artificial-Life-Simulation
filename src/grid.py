@@ -126,6 +126,34 @@ class Grid:
         ]
         return res
 
+    def get_adjacent(self, cell: "Cell"):
+        """
+        Get adjecent cells of a given cell (neighbours and corners)
+        """
+        corners = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        res = [
+            self._map[cell.x + i][cell.y + j]
+            for i, j in corners
+            if cell.x + i not in [-1, self.n_rows]
+            and cell.y + j not in [-1, self.n_cols]
+        ] + self.get_neighbours(cell)
+        return res
+
+    def large_texture(self, cell: "Cell"):
+        """
+        Determine is a large texture can be applied to a cell
+        """
+        adj = [(0, 1), (1, 0), (1, 1)]
+        res = [
+            self._map[cell.x + i][cell.y + j]
+            for i, j in adj
+            if cell.x + i != self.n_rows
+            and cell.y + j != self.n_cols
+            and self._map[cell.x + i][cell.y + j].type == cell.type
+
+        ]
+        return len(res) == 3
+
     def revert_changed(self, ind):
         """
         Revert changed to false
