@@ -12,7 +12,6 @@ class Cell(ABC):
     """
 
     SUBTYPES: dict
-
     def __init__(
         self,
         coordinates: tuple[int, int],
@@ -21,6 +20,7 @@ class Cell(ABC):
         type_: str | None = None,
         color: str | None = None,
         submissive: list[str] | None = None,
+        probability: float = 0.3
     ) -> None:
         self.x, self.y = coordinates
         self.age = age
@@ -28,6 +28,7 @@ class Cell(ABC):
         self.type = type_
         self._color = color
         self.submissive = submissive
+        self.probability = probability
         self.height = 10
         self.changed = False
         self.active = False
@@ -41,6 +42,7 @@ class Cell(ABC):
                 other.height -= 1
             elif ran > 0.8:
                 other.height += 1
+        other.probability = self.probability
         self.active = True
         other.active = True
         other.__class__ = self.__class__
@@ -109,7 +111,7 @@ class Water(Cell):
     SUBTYPES = {"wavy": 0.7, "ship": 0.3}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"])
+        super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"], 0.1)
 
     def infect(self, other: Cell) -> None:
         """
@@ -129,7 +131,7 @@ class Plains(Cell):
     SUBTYPES = {"grassy": 0.95, "house": 0.05}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"])
+        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"], 0.4)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -157,7 +159,7 @@ class Desert(Cell):
     SUBTYPES = {"cacti": 0.7, "wasteland": 0.295, "pyramid": 1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"])
+        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"], 0.7)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -181,7 +183,7 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"])
+        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"], 0.5)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -206,7 +208,7 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 10, "swamp", "#3e443c", ["forest", "plains", "water"]
+            coordinates, age, 10, "swamp", "#3e443c", ["forest", "plains", "water"], 0.8
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:

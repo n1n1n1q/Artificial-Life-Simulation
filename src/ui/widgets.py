@@ -1,7 +1,7 @@
 """
 Side panel widgets
 """
-
+import random
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QWidget,
@@ -312,13 +312,17 @@ class ApplyTexturesButton(QPushButton):
         """
         Apply textures, on click event
         """
-        large_subtypes = ["pyramid"]
         grid = self._parent._parent.grid
         for i, cell_ in enumerate(grid.cells):
-            cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
-            if cell.texture:
-                continue
             cell_.setPixmap(QPixmap())
+            cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
+            cell.texture = False
+        for i, cell_ in enumerate(grid.cells):
+            cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
+            print(cell.probability)
+            if cell.texture or random.random()>cell.probability:
+                continue
+            large_subtypes = ["pyramid", "wavy", "house", "ship"]
             texture_neighbours = [n for n in grid.grid.get_adjacent(cell) if n.type == cell.type and n.texture]
             if len(texture_neighbours) == 0:
                 subtype = cell.get_subtype()
