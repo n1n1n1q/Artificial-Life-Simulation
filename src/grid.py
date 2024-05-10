@@ -175,6 +175,7 @@ class Grid:
         Walks through the grid and updates its' cells according to its rules
         """
         if self.destinations[1]:
+            self._change_water()
             return True
         if self.destinations[0] == 1:
             self.biome_distribution()
@@ -202,3 +203,22 @@ class Grid:
                 if cell.active:
                     cell.age += 1
         self.revert_changed(ind)
+
+    def _change_water(self):
+        """
+        Calculate the height of water cells based on their distance to the nearest non-water cell
+        """
+        set_water = set()
+        set_not_water = set()
+        for row in self._map:
+            for cell in row:
+                if cell.type != 'water':
+                    set_not_water.add((cell.x, cell.y))
+        for row in self._map:
+            for cell in row:
+                if cell.type == 'water':
+                    dis_set = set()
+                    for el in set_not_water:
+                        dis_set.add((abs(el[0] - cell.x)**2 + abs(el[1] - cell.y)**2)**(1/2))
+                    set_water.add((cell, min(dis_set)))
+                    cell.height = 5 - min(dis_set)

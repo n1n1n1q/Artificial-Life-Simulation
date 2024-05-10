@@ -70,8 +70,8 @@ class Cell(ABC):
     @property
     def color(self):
         '''Calculates the color of the cell based on its type and height'''
-        if self.type == 'water':
-            return self._color
+        # if self.type == 'water':
+        #     return self._color
         rgb = colors.hex2color(self._color)
         rgb = (min(max(rgb[0]+(self.height-10)/100, 0), 1), \
 min(max(rgb[1]+(self.height-10)/100, 0), 1), min(max(rgb[2]+(self.height-10)/100, 0), 1))
