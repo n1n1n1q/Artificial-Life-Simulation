@@ -29,6 +29,9 @@ class Grid:
         return self._map[i]
 
     def generate_seed(self):
+        """
+        Generate a random seed string for the grid
+        """
         seed_chars = "1234567890abcdefghABCDEFGHQWERTYqwerty"
         seed = ""
         while len(seed) != 20:
@@ -83,13 +86,11 @@ class Grid:
                 if (
                     curr.type == "swamp"
                     and self._map[new[0]][new[1]].type == "water"
-                    and not len(
-                        [
-                            i
-                            for i in self.get_neighbours(self._map[new[0]][new[1]])
-                            if i.type != "water"
-                        ]
-                    )
+                    and not [
+                        i
+                        for i in self.get_neighbours(self._map[new[0]][new[1]])
+                        if i.type != "water"
+                    ]
                 ):
                     continue
                 curr.x, curr.y = new
