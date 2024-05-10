@@ -319,7 +319,8 @@ class ApplyTexturesButton(QPushButton):
             cell.texture = False
         for i, cell_ in enumerate(grid.cells):
             cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
-            print(cell.probability)
+            if cell.type == 'snowy':
+                print(subtype)
             if cell.texture or random.random()>cell.probability:
                 continue
             large_subtypes = ["pyramid", "wavy", "house", "ship"]

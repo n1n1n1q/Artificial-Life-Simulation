@@ -230,7 +230,7 @@ class Snowy(Cell):
     """
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 7, "snow", "#FFFFFF", ["forest", "plains"])
+        super().__init__(coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"])
         self.prev_type = None
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -245,6 +245,7 @@ class Snowy(Cell):
             tmp = other.type
             self._change_state(other)
             other.prev_type = tmp
+            print("A", tmp)
 
     def get_subtype(self):
         """
