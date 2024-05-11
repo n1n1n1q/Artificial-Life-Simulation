@@ -1,5 +1,5 @@
 # Terrain-Generation
-Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
+<img align="right" width="80" height="80" src="./assets/snowy/snowy.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
 ## Contents
 - [Installation](#installation)
 - [Discrete math](#discrete-mathematics-principles)
@@ -20,9 +20,11 @@ Customizable Minecraft-inspired application that simulates procedural terrain ge
 ...
 ### Manual install
 #### via Docker
-**Prerequisites:** Docker 26.1
+**Prerequisites:** Docker 26.1  
 Clone the repo, cd into the folder, run & build the image
 ```
+git clone https://github.com/n1n1n1q/Terrain-Generation
+cd Terrain-Generation
 docker build -t terrain-generation .
 docker run terrain-generation
 ```
@@ -30,45 +32,58 @@ docker run terrain-generation
 **Prerequisites:** Python 3.11  
 Clone the repo, cd into the folder, install dependencies and run main file
 ```
-git clone ...
-cd ...
+git clone https://github.com/n1n1n1q/Terrain-Generation
+cd Terrain-Generation
 pip install -r requirements.txt
 python src/main.py
 ```
 ## Discrete mathematics principles
-Our project is very closely connected to discrete maths.
-(cellular automata, automata theory)
+Our project's goal is to take a look at the practical usage of discrete mathematics principles, specifically the application of automata theory in procedural generation.  
+ Cellular automata are commonly used for simulation of different biological, physical, chemical proccessed, but another usage is procedural map or level generation in game development.  
+![Automata](assets/.readme/automata.png)
 ## Back-end
-### Project's architecture
-The project is implemented in Python 3.11. Highly recommended to use docker to run it.  
-These external libraries are used: PySide6 *(everything UI related)*, MatPlotLib *(color submodule, for color manipulation)*, NumPy (for better 2D arrays) and their dependencies.  
+### The architecture of the project
+The project is implemented in Python 3.11. It is highly recommended to use docker in order to run it.  
+The external libraries used in the project are: PySide6 *(user interface and generation visualization)*, MatPlotLib *(the color submodule of the library, used for color manipulation)*, NumPy *(for optimizing operations with 2D arrays)* and their dependencies.  
 The following modules are implemented:
-* *Cells* module, which contains cells' info and behaivours
-* *Grid* module, which is basically the mathematical model for cells interaction
-* *UI* module and its submodules, which is project's visualization
+* *Cells* module, which contains cells' info and behaivours. The module is highly customizable and is developped in such a way that makes implementing new cell types very easy and quick.
+* *Grid* module, which is basically the mathematical model for cells interaction. It contains complementary functions that help to manage the intaractions between cells, as well as the main function which updates the state of the grid.
+* *UI* module and its submodules, which is project's visualization. As well as the previous modules, it is designed in such a fashion that offers freedom for further interface extension. Consists of three submodules (main window, grid UI, widgets module).
 ### Algorithm
 (cellular automata, abstcract infect, grid)
 ### UI
-(few screenshots + tell about ui in general)
+The user interface is implemented with Qt6 Framework (in our case, we used PySide6, the official Python module from the Qt for Python project).
+The Ui has two main parts: the settings sidebar and the grid - the terrain generation visualization itself. 
+![UI-on-launch](assets/.readme/ui.png)
+#### Sidebar pannel
+The panel contains the following features: the basic inforamtion about the current map, settings  to customize new map, visualization control buttons (*'Start'* for starting the visualization, *'Regenerate'* for regenerating a random map or a map with the entered seed and size, and *'Apply textures'* for randomly distributing textures which can be randomly reapplied again after clicking the button again).
+#### Grid
 ## Generation
 ### Seeds
-Seeds are codes that generate certain maps. They are made, so if you liked the certain pattern, you can write it down and use it later. There are no certain restrictions for seeds entered by user, so you can type whatever you want. When generating a seed, it creates a random sequence of symbols from "1234567890abcdefghABCDEFGHQWERTYqwerty" with length 20.
+Seeds are character sequences that can generate certain maps. Their purpose is to provide the possibility to save a certain pattern for later. It holds the infomration about the locations of the inital biome cells (water, desert, plains), as well as further biome subtype disctribution (mountains, swamp, forest, snow). There are no restrictions for the seed entered by the user. If no seed is entered, a random seed will be generated. A randomly generated seed is a sequence of 20 characters from the following "1234567890abcdefghABCDEFGHQWERTYqwerty".  
 ### Cell class
-Cell is an abstraction, which represents certain part of the map.
+Cell is an abstraction, which represents a certain section of the map. Each cell is assigned a certain set of attributes, such as its coordinates, age, threshold age (maximum age that a cell can reach), type, the cell's submissive types (biomes that can be 'consumed' by the cell).
 ### Global behaivours
-(destination points & thresholds)
+The generation proccess is split into 5 stages:
+1) Filling the initial map with void cells.
+2) Random distribution of 'starting' biome cells (water, desert, plains) and their growth. Desert and plains are assigned random height during this stage, which directly influences their color (makes it either darker or lighter than the color of the initial cell).
+3) Random distribution of 'secondary' cells (mountain, forest, swamp and snow) and their growth. All of the secondary cells use the same height principle mentioned above.
+4) The depth of water distribution which affects the cell color as well. The farther from the shore, the deeper the water, meaning the darker cell color.
+5) *(Optional generation stage)* Texture distribution which can be Regenerated on button click.
 ### Cells types and certain behaviours
-* Void
-* Water
-* Desert
-* Plains
-* Forest
-* Snowy
+* **Void**. The cells that fill up the inital map before the start of the generation and are not assigned any biome-specific type belong to the type void. Void cells do not have any submissive types meaning void does not 'infect' its neighbouring cells. Void cells are consumable only by water cells.
+* **Water**. The only cell type consumable by water cells is void. It is not limited by threshold age so it spreads over the entire map. Water is consumed by the desert and plains biomes and can be randomly assigned a 'wavy' or 'ship' subtype and the corresponding textures will be applied.
+* **Desert**. Desert cells can spread over water cells and, with a small chance, can be consumed by plains. Desert is part of the initial biome disctribution stage meaning its one of the first cells to be placed over a map filled with void cells. The following subtypes and texures can be applied to desert cells: 'pyramid', 'cacti' and 'wasteland'.
+* **Plains**. Plains, similarly to desert cells, can spread over water. Additionaly, plains cells can spread over the desert biome with a rate smaller than on water. Plains, like desert and water, are part of the starting biome cells. Special subtypes of plains include 'grassy' and 'house'.
+* **Forest**. Forest cells are part of the secondary biome distribution stage. They can spread over plains at a far smaller rate than the rate at which primary biomes spread over water. Forest cells are assigned the following texture subtypes: 'birch', 'oak' and 'pine'.
+* **Mountains**. Mountains are disctributed in the secondary biome distribution stage. The only cell type consumed by the mountain biome is the plains biome. The textures and subtypes applied to the mountains cells are 'peaky' and 'steep'. 
+* **Swamp**. Swamp cells spread over plains cells and water cells. The starting swamp cell placed at the start of the secondary biome distribution stage can be located on a plains cell but can also be placed on a water cell only if it has neighbouring cells of the plains cell type. Swamp cells can be randomly assigned a texture.
+* **Snowy**. Snow is also distributed in the second generation stage and its submissive types are plains, forest and mountains. The consumed biome determines the subtype of the snow cells: forest cells become snow cells with the subtype 'forest', mountain cells become snow cells with the subtype 'mountains' and plains cells become snow cells without a subtype.
 
 ## Showcase
 insert_youtube_link_and_some_filler_text
 ## Developers and responsibilities
-[Oleh Basystyi](https://github.com/n1n1n1q)  
-[Anna Stasyshyn](https://github.com/annastasyshyn)  
-[Viktor Pakholok](https://github.com/viktorpakholok)  
-[Olesya Hapyuk](https://github.com/olkaleska)
+[Oleh Basystyi](https://github.com/n1n1n1q) - research, cells module, sprites, some parts of UI and grid modules   
+[Anna Stasyshyn](https://github.com/annastasyshyn) - research, UI module, report, cells fixes   
+[Viktor Pakholok](https://github.com/viktorpakholok) - grid module and some optimization fixes   
+[Olesya Hapyuk](https://github.com/olkaleska) - :(
