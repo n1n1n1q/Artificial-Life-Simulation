@@ -78,7 +78,9 @@ class Cell(ABC):
         rgb = (min(max(rgb[0]+(self.height-10)/100, 0), 1), \
 min(max(rgb[1]+(self.height-10)/100, 0), 1), min(max(rgb[2]+(self.height-10)/100, 0), 1))
         return colors.to_hex(rgb)
-
+    @property
+    def age_coeff(self):
+        return 1 - (self.age / self.threshold_age) if self.age > 3 else 0
     def __repr__(self):
         return f"{self.type} ({self.x}, {self.y})"
 
@@ -111,7 +113,7 @@ class Water(Cell):
     SUBTYPES = {"wavy": 0.7, "ship": 0.3}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"], 0.1)
+        super().__init__(coordinates, age, 500, "water", "#1A4480", ["void"], 0.02)
 
     def infect(self, other: Cell) -> None:
         """
@@ -128,10 +130,10 @@ class Plains(Cell):
     A cell class that represents an area of plains type
     """
 
-    SUBTYPES = {"grassy": 0.95, "house": 0.05}
+    SUBTYPES = {"grassy": 0.75, "house": 0.05}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"], 0.4)
+        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"], 0.09)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -140,11 +142,11 @@ class Plains(Cell):
         """
         if (
             other.type in self.submissive
-            and random.random() + coeff**2 / 200 > 0.8
+            and random.random() + self.age_coeff/2 + coeff**2 / 500 > 0.8
             and self.age <= self.threshold_age
         ) or (
             other.type == "desert"
-            and random.random() + coeff**2 / 200 > 0.99
+            and random.random() > 0.95
             and self.age <= self.threshold_age
         ):
             self._change_state(other)
@@ -156,10 +158,10 @@ class Desert(Cell):
     A cell class that represents an area of desert type
     """
 
-    SUBTYPES = {"cacti": 0.7, "wasteland": 0.295, "pyramid": 1}
+    SUBTYPES = {"cacti": 0.6, "wasteland": 0.3, "pyramid": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"], 0.7)
+        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"], probability=0.1)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -183,7 +185,7 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"], 0.5)
+        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"], 0.17)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -227,10 +229,9 @@ class Snowy(Cell):
     Snowy cell class
     A cell that represents a snowy area
     """
-
+    SUBTYPES = {"snowy": 0.5, "mountain":0.5}
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"])
-        self.prev_type = None
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -241,15 +242,8 @@ class Snowy(Cell):
             and self.age <= self.threshold_age
             and (random.random() > 0.5 or coeff in range(1,3))
         ):
-            tmp = other.type
             self._change_state(other)
-            other.prev_type = tmp
 
-    def get_subtype(self):
-        """
-        Get snowy cell's subtype
-        """
-        return self.prev_type if self.prev_type else "snowy"
 
 
 class Mountain(Cell):
