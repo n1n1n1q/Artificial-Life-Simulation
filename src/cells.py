@@ -194,7 +194,6 @@ class Forest(Cell):
             and (random.random() > 0.7 or coeff in range(0, 3))
             and self.age <= self.threshold_age
         ):
-            print(coeff)
             self._change_state(other)
 
 
@@ -245,7 +244,6 @@ class Snowy(Cell):
             tmp = other.type
             self._change_state(other)
             other.prev_type = tmp
-            print("A", tmp)
 
     def get_subtype(self):
         """

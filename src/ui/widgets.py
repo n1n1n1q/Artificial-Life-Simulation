@@ -173,7 +173,7 @@ class DelaySlider(QSlider):
     Delay adjustment slider
     """
 
-    MIN_DELAY = 50
+    MIN_DELAY = 10
     MAX_DELAY = 1000
 
     def __init__(self, parent=None):
@@ -181,7 +181,7 @@ class DelaySlider(QSlider):
         self._parent = parent
         self.setOrientation(Qt.Horizontal)
         self.setRange(self.MIN_DELAY, self.MAX_DELAY)
-        self.setValue(300)
+        self.setValue(50)
         self.valueChanged.connect(self.update_info)
 
     def update_info(self):
@@ -319,8 +319,6 @@ class ApplyTexturesButton(QPushButton):
             cell.texture = False
         for i, cell_ in enumerate(grid.cells):
             cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
-            if cell.type == 'snowy':
-                print(subtype)
             if cell.texture or random.random()>cell.probability:
                 continue
             large_subtypes = ["pyramid", "wavy", "house", "ship"]

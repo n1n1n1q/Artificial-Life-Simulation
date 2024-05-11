@@ -75,7 +75,6 @@ class Grid:
         used = set()
         while stack:
             curr = stack.pop()((-1, -1))
-            print(curr)
             while 1:
                 new = (
                     random.randint(0, self.n_rows - 1),
