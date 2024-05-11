@@ -7,13 +7,14 @@
     - [Project's architecture](#projects-architecture)
     - [Algorithm](#algorithm)
     - [UI](#ui)
-- [Generation](#terrain-generation)
+- [Generation](#generation)
     - [Seeds mechanic](#seeds)
     - [Cell class](#cell-class)
     - [Global behaivours](#global-behaivours)
     - [Cells types](#cells-types-and-certain-behaviours)
 - [Showcase](#showcase)
-- [Credits](#credits)
+- [Credits](#developers-and-responsibilities)
+- [License](#license)
 
 ## Installation
 ### Install via Docker hub
@@ -61,9 +62,22 @@ The user interface is implemented with Qt6 Framework (in our case, we used PySid
 The Ui has two main parts: the settings sidebar and the grid - the terrain generation visualization itself. 
   
 ![UI-on-launch](assets/.readme/ui.png)
-<img align="right" width="250" src="assets/.readme/sidepanel.png"></img>
 #### Sidebar pannel
-The panel contains the following features: the basic inforamtion about the current map, settings  to customize new map, visualization control buttons (generation delay slider for adjusting the speed of the visualization, *'Start'* for starting the visualization, *'Regenerate'* for regenerating a random map or a map with the entered seed and size, and *'Apply textures'* for randomly distributing textures which can be randomly reapplied again after clicking the button again).  
+<img align="right" width="225" src="assets/.readme/sidepanel.png"></img>
+The panel contains the following features:
+* Basic inforamtion about the current map
+* Settings to customize new map  
+    * Seed input
+    * Size input 
+* Visualization control buttons:
+    * Generation delay slider for adjusting the speed of the visualization
+    * *'Start/Stop'* button for starting and stopping the visualization
+    * *'Regenerate'* button for regenerating a random map or a map with the entered seed and size
+    * *'Apply textures'* button for randomly distributing textures which can be randomly reapplied again after clicking the button again.  
+
+
+
+
 #### Grid
 <img align="right" width="150" height="150" src="assets/.readme/generation.gif"></img>The grid submodule of the UI module contains the grid widget which handles the visualization updates. It contains widgets that reprsent the current state of the cells, each with a size adjusted based on the number of columns and rows of the map, and a background color depending on the type of the cell and its height attribute.   
 ## Generation
@@ -97,3 +111,5 @@ You can see the full showcase below.
 [Anna Stasyshyn](https://github.com/annastasyshyn) - research, UI module, report, cells fixes   
 [Viktor Pakholok](https://github.com/viktorpakholok) - grid module and some optimization fixes   
 [Olesya Hapyuk](https://github.com/olkaleska) - :(
+## License
+[MIT License, 2024](LICENSE)
