@@ -17,19 +17,9 @@
 - [License](#license)
 
 ## Installation
-### Install via Docker hub
+### Install via Pypi
 ...
 ### Manual install
-#### via Docker
-**Prerequisites:** Docker 26.1  
-Clone the repo, cd into the folder, run & build the image
-```
-git clone https://github.com/n1n1n1q/Terrain-Generation
-cd Terrain-Generation
-docker build -t terrain-generation .
-docker run terrain-generation
-```
-#### via Python
 **Prerequisites:** Python 3.11  
 Clone the repo, cd into the folder, install dependencies and run main file
 ```
