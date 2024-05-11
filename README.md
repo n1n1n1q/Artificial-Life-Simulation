@@ -1,5 +1,5 @@
 # Terrain-Generation
-<img align="right" width="80" height="80" src="./assets/snowy/snowy.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
+<img align="right" width="80" height="80" src="./assets/.readme/logo.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
 ## Contents
 - [Installation](#installation)
 - [Discrete math](#discrete-mathematics-principles)
@@ -38,9 +38,11 @@ pip install -r requirements.txt
 python src/main.py
 ```
 ## Discrete mathematics principles
-Our project's goal is to take a look at the practical usage of discrete mathematics principles, specifically the application of automata theory in procedural generation.  
- Cellular automata are commonly used for simulation of different biological, physical, chemical proccessed, but another usage is procedural map or level generation in game development.  
-![Automata](assets/.readme/automata.png)
+<img align="right" width = 200 src="assets/.readme/automata.png">Our project's goal is to take a look at the practical usage of discrete mathematics principles, specifically the application of automata theory in procedural generation.  
+Cellular automata are commonly used for simulation of different biological, physical, chemical proccessed, but another usage is procedural map or level generation in game development.  
+
+You can see FSM's diagram on the right. State changes with some random chance and certain map conditions (More detailed description at [Cells types and certain behaivours](#cells-types-and-certain-behaviours))
+
 ## Back-end
 ### The architecture of the project
 The project is implemented in Python 3.11. It is highly recommended to use docker in order to run it.  
@@ -50,14 +52,21 @@ The following modules are implemented:
 * *Grid* module, which is basically the mathematical model for cells interaction. It contains complementary functions that help to manage the intaractions between cells, as well as the main function which updates the state of the grid.
 * *UI* module and its submodules, which is project's visualization. As well as the previous modules, it is designed in such a fashion that offers freedom for further interface extension. Consists of three submodules (main window, grid UI, widgets module).
 ### Algorithm
-(cellular automata, abstcract infect, grid)
+As it was mentioned in [Discrete math principles](#discrete-mathematics-principles), the cellular automata is the base concept of the project.  
+The cells structure is organized accordingle to OOP principles. There is an abstractl cell class and real cells that inherit from it. 
+Each real cell has the *infect* method, which is basically how the algorithm works. If the state of current map satisifies certain conditions (number of active cells around the chosen one, their types, whether the cell can grow and so on), the current cell infects its neighbours and they are assigned the same type.
+The grid module serves as a cells handler. It sets the map up and updates it. This module includes some additional functional (such as water height distribution).
 ### UI
 The user interface is implemented with Qt6 Framework (in our case, we used PySide6, the official Python module from the Qt for Python project).
 The Ui has two main parts: the settings sidebar and the grid - the terrain generation visualization itself. 
+  
 ![UI-on-launch](assets/.readme/ui.png)
 #### Sidebar pannel
-The panel contains the following features: the basic inforamtion about the current map, settings  to customize new map, visualization control buttons (*'Start'* for starting the visualization, *'Regenerate'* for regenerating a random map or a map with the entered seed and size, and *'Apply textures'* for randomly distributing textures which can be randomly reapplied again after clicking the button again).
+The panel contains the following features: the basic inforamtion about the current map, settings  to customize new map, visualization control buttons (generation delay slider for adjusting the speed of the visualization, *'Start'* for starting the visualization, *'Regenerate'* for regenerating a random map or a map with the entered seed and size, and *'Apply textures'* for randomly distributing textures which can be randomly reapplied again after clicking the button again).
+  
+![Side-panel](assets/.readme/sidepanel.png)
 #### Grid
+<img align="right" width="150" height="150" src="assets/.readme/generation.gif"></img>The grid submodule of the UI module contains the grid widget which handles the visualization updates. It contains widgets that reprsent the current state of the cells, each with a size adjusted based on the number of columns and rows of the map, and a background color depending on the type of the cell and its height attribute.   
 ## Generation
 ### Seeds
 Seeds are character sequences that can generate certain maps. Their purpose is to provide the possibility to save a certain pattern for later. It holds the infomration about the locations of the inital biome cells (water, desert, plains), as well as further biome subtype disctribution (mountains, swamp, forest, snow). There are no restrictions for the seed entered by the user. If no seed is entered, a random seed will be generated. A randomly generated seed is a sequence of 20 characters from the following "1234567890abcdefghABCDEFGHQWERTYqwerty".  
@@ -68,7 +77,7 @@ The generation proccess is split into 5 stages:
 1) Filling the initial map with void cells.
 2) Random distribution of 'starting' biome cells (water, desert, plains) and their growth. Desert and plains are assigned random height during this stage, which directly influences their color (makes it either darker or lighter than the color of the initial cell).
 3) Random distribution of 'secondary' cells (mountain, forest, swamp and snow) and their growth. All of the secondary cells use the same height principle mentioned above.
-4) The depth of water distribution which affects the cell color as well. The farther from the shore, the deeper the water, meaning the darker cell color.
+4) The depth of water distribution which affects the cell color as well. The farther from the shore, the deeper the water, meaning the darker the cell color.
 5) *(Optional generation stage)* Texture distribution which can be Regenerated on button click.
 ### Cells types and certain behaviours
 * **Void**. The cells that fill up the inital map before the start of the generation and are not assigned any biome-specific type belong to the type void. Void cells do not have any submissive types meaning void does not 'infect' its neighbouring cells. Void cells are consumable only by water cells.
@@ -81,7 +90,9 @@ The generation proccess is split into 5 stages:
 * **Snowy**. Snow is also distributed in the second generation stage and its submissive types are plains, forest and mountains. The consumed biome determines the subtype of the snow cells: forest cells become snow cells with the subtype 'forest', mountain cells become snow cells with the subtype 'mountains' and plains cells become snow cells without a subtype.
 
 ## Showcase
-insert_youtube_link_and_some_filler_text
+You can see the full showcase below.  
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
 ## Developers and responsibilities
 [Oleh Basystyi](https://github.com/n1n1n1q) - research, cells module, sprites, some parts of UI and grid modules   
 [Anna Stasyshyn](https://github.com/annastasyshyn) - research, UI module, report, cells fixes   
