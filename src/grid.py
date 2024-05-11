@@ -150,7 +150,6 @@ class Grid:
             if cell.x + i != self.n_rows
             and cell.y + j != self.n_cols
             and self._map[cell.x + i][cell.y + j].type == cell.type
-
         ]
         return len(res) == 3
 
@@ -211,13 +210,16 @@ class Grid:
         set_not_water = set()
         for row in self._map:
             for cell in row:
-                if cell.type != 'water':
+                if cell.type != "water":
                     set_not_water.add((cell.x, cell.y))
         for row in self._map:
             for cell in row:
-                if cell.type == 'water':
+                if cell.type == "water":
                     dis_set = set()
                     for el in set_not_water:
-                        dis_set.add((abs(el[0] - cell.x)**2 + abs(el[1] - cell.y)**2)**(1/2))
+                        dis_set.add(
+                            (abs(el[0] - cell.x) ** 2 + abs(el[1] - cell.y) ** 2)
+                            ** (1 / 2)
+                        )
                     set_water.add((cell, min(dis_set)))
                     cell.height = 5 - min(dis_set)

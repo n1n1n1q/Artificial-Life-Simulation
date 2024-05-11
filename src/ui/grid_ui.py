@@ -79,6 +79,7 @@ class GridWidget(QWidget):
             self._parent.toggle_update()
             self._parent.side_panel.textures_button.setEnabled(True)
 
+
 class GridCellWidget(QLabel):
     """
     Cell widget

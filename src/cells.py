@@ -6,12 +6,14 @@ import random
 from abc import ABC, abstractmethod
 from matplotlib import colors
 
+
 class Cell(ABC):
     """
     Cell template class
     """
 
     SUBTYPES: dict
+
     def __init__(
         self,
         coordinates: tuple[int, int],
@@ -20,7 +22,7 @@ class Cell(ABC):
         type_: str | None = None,
         color: str | None = None,
         submissive: list[str] | None = None,
-        probability: float = 0.3
+        probability: float = 0.3,
     ) -> None:
         self.x, self.y = coordinates
         self.age = age
@@ -37,7 +39,7 @@ class Cell(ABC):
     def _change_state(self, other: "Cell"):
         other.age = self.age + 1
         ran = random.random()
-        if self.type != 'water':
+        if self.type != "water":
             if ran < 0.2:
                 other.height -= 1
             elif ran > 0.8:
@@ -69,18 +71,24 @@ class Cell(ABC):
         # if 1 - self.SUBTYPES[sub] >= random.random():
         #     return sub
         # return "regular"
+
     @property
     def color(self):
-        '''Calculates the color of the cell based on its type and height'''
+        """Calculates the color of the cell based on its type and height"""
         # if self.type == 'water':
         #     return self._color
         rgb = colors.hex2color(self._color)
-        rgb = (min(max(rgb[0]+(self.height-10)/100, 0), 1), \
-min(max(rgb[1]+(self.height-10)/100, 0), 1), min(max(rgb[2]+(self.height-10)/100, 0), 1))
+        rgb = (
+            min(max(rgb[0] + (self.height - 10) / 100, 0), 1),
+            min(max(rgb[1] + (self.height - 10) / 100, 0), 1),
+            min(max(rgb[2] + (self.height - 10) / 100, 0), 1),
+        )
         return colors.to_hex(rgb)
+
     @property
     def age_coeff(self):
         return 1 - (self.age / self.threshold_age) if self.age > 3 else 0
+
     def __repr__(self):
         return f"{self.type} ({self.x}, {self.y})"
 
@@ -142,7 +150,7 @@ class Plains(Cell):
         """
         if (
             other.type in self.submissive
-            and random.random() + self.age_coeff/2 + coeff**2 / 500 > 0.8
+            and random.random() + self.age_coeff / 2 + coeff**2 / 500 > 0.8
             and self.age <= self.threshold_age
         ) or (
             other.type == "desert"
@@ -161,7 +169,9 @@ class Desert(Cell):
     SUBTYPES = {"cacti": 0.6, "wasteland": 0.3, "pyramid": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 35, "desert", "#f6d7b0", ["water"], probability=0.1)
+        super().__init__(
+            coordinates, age, 35, "desert", "#f6d7b0", ["water"], probability=0.1
+        )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -229,9 +239,13 @@ class Snowy(Cell):
     Snowy cell class
     A cell that represents a snowy area
     """
-    SUBTYPES = {"snowy": 0.5, "mountain":0.5}
+
+    SUBTYPES = {"snowy": 0.5, "mountain": 0.5}
+
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"])
+        super().__init__(
+            coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"]
+        )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -240,10 +254,9 @@ class Snowy(Cell):
         if (
             other.type in self.submissive
             and self.age <= self.threshold_age
-            and (random.random() > 0.5 or coeff in range(1,3))
+            and (random.random() > 0.5 or coeff in range(1, 3))
         ):
             self._change_state(other)
-
 
 
 class Mountain(Cell):
