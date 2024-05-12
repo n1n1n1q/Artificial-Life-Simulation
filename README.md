@@ -17,7 +17,7 @@
 - [License](#license)
 
 ## Installation
-### Install via Pypi
+### Install via PyPi
 ...
 ### Manual install
 **Prerequisites:** Python 3.11  
@@ -64,6 +64,7 @@ The panel contains the following features:
     * *'Start/Stop'* button for starting and stopping the visualization
     * *'Regenerate'* button for regenerating a random map or a map with the entered seed and size
     * *'Apply textures'* button for randomly distributing textures which can be randomly reapplied again after clicking the button again.  
+    * *'Export' button for exporting the map as .png*
 
 
 
@@ -85,21 +86,21 @@ The generation proccess is split into 5 stages:
 ### Cells types and certain behaviours
 * **Void**. The cells that fill up the inital map before the start of the generation and are not assigned any biome-specific type belong to the type void. Void cells do not have any submissive types meaning void does not 'infect' its neighbouring cells. Void cells are consumable only by water cells.
 * **Water**. The only cell type consumable by water cells is void. It is not limited by threshold age so it spreads over the entire map. Water is consumed by the desert and plains biomes and can be randomly assigned a 'wavy' or 'ship' subtype and the corresponding textures will be applied.
-* **Desert**. Desert cells can spread over water cells and, with a small chance, can be consumed by plains. Desert is part of the initial biome disctribution stage meaning its one of the first cells to be placed over a map filled with void cells. The following subtypes and texures can be applied to desert cells: 'pyramid', 'cacti' and 'wasteland'.
-* **Plains**. Plains, similarly to desert cells, can spread over water. Additionaly, plains cells can spread over the desert biome with a rate smaller than on water. Plains, like desert and water, are part of the starting biome cells. Special subtypes of plains include 'grassy' and 'house'.
+* **Desert**. Desert cells can spread over water cells and, with a small chance, can be consumed by plains. Desert is part of the initial biome disctribution stage meaning its one of the first cells to be placed over a map filled with void cells. The following subtypes and texures can be applied to desert cells: 'pyramid', 'cacti' and 'wasteland'. With a certain chance can infect the plains biome cell.
+* **Plains**. Plains, similarly to desert cells, can spread over water. Additionaly, plains cells can spread over the desert biome with a rate smaller than on water. Plains, like desert and water, are part of the starting biome cells. Special subtypes of plains include 'grassy' and 'house'. As well as desert, can consume its counterpart.
 * **Forest**. Forest cells are part of the secondary biome distribution stage. They can spread over plains at a far smaller rate than the rate at which primary biomes spread over water. Forest cells are assigned the following texture subtypes: 'birch', 'oak' and 'pine'.
 * **Mountains**. Mountains are disctributed in the secondary biome distribution stage. The only cell type consumed by the mountain biome is the plains biome. The textures and subtypes applied to the mountains cells are 'peaky' and 'steep'. 
 * **Swamp**. Swamp cells spread over plains cells and water cells. The starting swamp cell placed at the start of the secondary biome distribution stage can be located on a plains cell but can also be placed on a water cell only if it has neighbouring cells of the plains cell type. Swamp cells can be randomly assigned a texture.
-* **Snowy**. Snow is also distributed in the second generation stage and its submissive types are plains, forest and mountains. The consumed biome determines the subtype of the snow cells: forest cells become snow cells with the subtype 'forest', mountain cells become snow cells with the subtype 'mountains' and plains cells become snow cells without a subtype.
+* **Snowy**. Snow is also distributed in the secondary generation stage and its submissive types are plains, forest and mountains. Like any other biome, snow cells are assigned a random subtype from one of the following: 'mountain' or 'snowy' if the previous subtypes were not assigned to the cell.  
 
 ## Showcase
 You can see the full showcase below.  
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/AYHXwCpbbagz/0.jpg)](https://www.youtube.com/watch?v=AYHXwCpbbag)
 ## Developers and responsibilities
 [Oleh Basystyi](https://github.com/n1n1n1q) - research, cells module, sprites, some parts of UI and grid modules   
 [Anna Stasyshyn](https://github.com/annastasyshyn) - research, UI module, report, cells fixes   
-[Viktor Pakholok](https://github.com/viktorpakholok) - grid module and some optimization fixes   
+[Viktor Pakholok](https://github.com/viktorpakholok) - grid module, some optimization fixes and deployment  
 [Olesya Hapyuk](https://github.com/olkaleska) - :(
 ## License
 [MIT License, 2024](LICENSE)

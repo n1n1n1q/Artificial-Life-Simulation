@@ -308,7 +308,7 @@ class Info(QLabel):
         Update info text
         """
         self.setText(
-            f"""Seed = {self.seed}
+            f"""Seed: {self.seed}
 Map's size: {self.size[1]}x{self.size[0]}
 Delay: {self.delay}"""
         )
