@@ -1,0 +1,2 @@
+[MAIN]
+ignored-modules=PySide6,ui,grid,cells

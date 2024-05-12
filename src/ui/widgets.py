@@ -11,8 +11,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSlider,
     QLineEdit,
-    QLabel,
-    QFileDialog,
+    QLabel
 )
 
 from PySide6.QtCore import Qt
