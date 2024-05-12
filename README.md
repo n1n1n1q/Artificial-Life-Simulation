@@ -96,7 +96,7 @@ The generation proccess is split into 5 stages:
 ## Showcase
 You can see the full showcase below.  
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/AYHXwCpbbagz/0.jpg)](https://www.youtube.com/watch?v=AYHXwCpbbag)
+[![Showcase](https://img.youtube.com/vi/AYHXwCpbbagz/0.jpg)](https://www.youtube.com/watch?v=AYHXwCpbbag)
 ## Developers and responsibilities
 [Oleh Basystyi](https://github.com/n1n1n1q) - research, cells module, sprites, some parts of UI and grid modules   
 [Anna Stasyshyn](https://github.com/annastasyshyn) - research, UI module, report, cells fixes   
