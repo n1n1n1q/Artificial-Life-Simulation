@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSlider,
     QLineEdit,
-    QLabel
+    QLabel,
 )
 
 from PySide6.QtCore import Qt
@@ -24,7 +24,7 @@ class SidePanelWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._parent = parent
+        self.parent_ = parent
         self.sidebar_layout = QVBoxLayout()
 
         self.main_title = Title("Terrain generation")
@@ -132,7 +132,7 @@ class ToggleButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__("Start")
-        self._parent = parent
+        self.parent_ = parent
 
 
 class SeedInputLabel(QLabel):
@@ -152,7 +152,7 @@ class SeedInput(QLineEdit):
 
     def __init__(self, parent=None):
         super().__init__()
-        self._parent = parent
+        self.parent_ = parent
         self.setMaxLength(20)
         self.textChanged.connect(self.reset_color)
 
@@ -183,7 +183,7 @@ class DelaySlider(QSlider):
 
     def __init__(self, parent=None):
         super().__init__()
-        self._parent = parent
+        self.parent_ = parent
         self.setOrientation(Qt.Horizontal)
         self.setRange(self.MIN_DELAY, self.MAX_DELAY)
         self.setValue(50)
@@ -193,7 +193,7 @@ class DelaySlider(QSlider):
         """
         Update info's delay val
         """
-        info = self._parent.info
+        info = self.parent_.info
         info.delay = self.value()
         info.update_text()
 
@@ -205,36 +205,36 @@ class RegenerateButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__("Regenerate")
-        self._parent = parent
+        self.parent_ = parent
         self.clicked.connect(self.on_click)
 
     def on_click(self) -> None:
         """
         Regenerate button, on click event
         """
-        if self._parent.validate_all_inputs():
-            grid = self._parent._parent.grid
+        if self.parent_.validate_all_inputs():
+            grid = self.parent_.parent_.grid
             try:
                 size = (
-                    int(self._parent.size_input_n.text()),
-                    int(self._parent.size_input_m.text()),
+                    int(self.parent_.size_input_n.text()),
+                    int(self.parent_.size_input_m.text()),
                 )
             except ValueError:
                 size = grid.n_rows, grid.n_cols
-            self._parent._parent.grid.n_rows, self._parent._parent.grid.n_cols = size
+            self.parent_.parent_.grid.n_rows, self.parent_.parent_.grid.n_cols = size
             seed = (
-                self._parent.seed_input.text()
-                if self._parent.seed_input.text()
+                self.parent_.seed_input.text()
+                if self.parent_.seed_input.text()
                 else grid.grid.generate_seed()
             )
-            info = self._parent.info
+            info = self.parent_.info
             info.seed = seed
             info.size = size
             info.update_text()
 
             grid.setParent(None)
-            self._parent.textures_button.setEnabled(False)
-            self._parent._parent.init_grid(size, seed)
+            self.parent_.textures_button.setEnabled(False)
+            self.parent_.parent_.init_grid(size, seed)
 
 
 class ExportButton(QPushButton):
@@ -244,7 +244,7 @@ class ExportButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self._parent = parent
+        self.parent_ = parent
         self.setText("Export")
 
 
@@ -265,7 +265,7 @@ class SizeField(QLineEdit):
 
     def __init__(self, parent=None) -> None:
         super().__init__()
-        self._parent = parent
+        self.parent_ = parent
         self.textChanged.connect(self.reset_color)
 
     def reset_color(self):
@@ -298,7 +298,7 @@ class Info(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self._parent = parent
+        self.parent_ = parent
         self.seed = None
         self.size = None
         self.delay = None
@@ -321,7 +321,7 @@ class ApplyTexturesButton(QPushButton):
 
     def __init__(self, parent):
         super().__init__("Apply textures")
-        self._parent = parent
+        self.parent_ = parent
         self.setEnabled(False)
         self.clicked.connect(self.on_click)
 
@@ -329,7 +329,7 @@ class ApplyTexturesButton(QPushButton):
         """
         Apply textures, on click event
         """
-        grid = self._parent._parent.grid
+        grid = self.parent_.parent_.grid
         for i, cell_ in enumerate(grid.cells):
             cell_.setPixmap(QPixmap())
             cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
