@@ -1,0 +1,14 @@
+digraph G {
+Void -> Water;
+Water -> Plains;
+Water -> Desert;
+Water -> Swamp;
+Desert -> Plains;
+Plains -> Desert;
+Plains -> Forest;
+Plains -> Snow;
+Plains -> Mountain;
+Plains -> Swamp;
+Forest -> Snow;
+Mountain -> Snow;
+}
