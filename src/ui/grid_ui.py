@@ -2,9 +2,7 @@
 Grid widget and grid cell widget
 """
 
-import random
-
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPixmap
@@ -34,6 +32,7 @@ class GridWidget(QWidget):
         self.setContentsMargins(0, 0, 0, 0)
         self._parent = parent
         self.setLayout(self.grid_layout)
+        self._parent.side_panel.export_button.clicked.connect(self.export_as_png)
 
     def clear_grid(self):
         """
@@ -78,6 +77,18 @@ class GridWidget(QWidget):
         if is_stopped:
             self._parent.toggle_update()
             self._parent.side_panel.textures_button.setEnabled(True)
+
+    def export_as_png(self):
+        """
+        Export the map as png
+        """
+        pixmap = QPixmap(self.size())
+        self.render(pixmap)
+        file_name, _ = QFileDialog.getSaveFileName(
+            self, "Save Image", "", "PNG (*.png)"
+        )
+        if file_name:
+            pixmap.save(file_name + ".png", "PNG")
 
 
 class GridCellWidget(QLabel):

@@ -12,9 +12,7 @@ from PySide6.QtWidgets import (
     QSlider,
     QLineEdit,
     QLabel,
-    QFrame,
-    QSpacerItem,
-    QSizePolicy,
+    QFileDialog,
 )
 
 from PySide6.QtCore import Qt
@@ -55,6 +53,7 @@ class SidePanelWidget(QWidget):
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
         self.textures_button = ApplyTexturesButton(self)
+        self.export_button = ExportButton(self)
 
         self.top_section = QWidget()
         self.top_layout = QVBoxLayout()
@@ -85,6 +84,12 @@ class SidePanelWidget(QWidget):
         )
         self.bottom_layout.addWidget(
             self.textures_button, alignment=Qt.AlignmentFlag.AlignBottom
+        )
+        self.bottom_layout.addWidget(
+            self.regenerate_button, alignment=Qt.AlignmentFlag.AlignBottom
+        )
+        self.bottom_layout.addWidget(
+            self.export_button, alignment=Qt.AlignmentFlag.AlignBottom
         )
         self.bottom_section.setLayout(self.bottom_layout)
 
@@ -231,6 +236,17 @@ class RegenerateButton(QPushButton):
             grid.setParent(None)
             self._parent.textures_button.setEnabled(False)
             self._parent._parent.init_grid(size, seed)
+
+
+class ExportButton(QPushButton):
+    """
+    Export button
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._parent = parent
+        self.setText("Export")
 
 
 class SizeLabel(QLabel):

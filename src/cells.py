@@ -68,15 +68,10 @@ class Cell(ABC):
         probabilities = list(self.SUBTYPES.values())
         sub = random.choices(options, probabilities)[0]
         return sub
-        # if 1 - self.SUBTYPES[sub] >= random.random():
-        #     return sub
-        # return "regular"
 
     @property
     def color(self):
         """Calculates the color of the cell based on its type and height"""
-        # if self.type == 'water':
-        #     return self._color
         rgb = colors.hex2color(self._color)
         rgb = (
             min(max(rgb[0] + (self.height - 10) / 100, 0), 1),
@@ -87,6 +82,9 @@ class Cell(ABC):
 
     @property
     def age_coeff(self):
+        """
+        Returns age coefficient
+        """
         return 1 - (self.age / self.threshold_age) if self.age > 3 else 0
 
     def __repr__(self):
@@ -141,7 +139,7 @@ class Plains(Cell):
     SUBTYPES = {"grassy": 0.75, "house": 0.05}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"], 0.09)
+        super().__init__(coordinates, age, 50, "plains", "#62bc2f", ["water"], 0.09)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -195,7 +193,7 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"], 0.17)
+        super().__init__(coordinates, age, 15, "forest", "#5D9F59", ["plains"], 0.17)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
@@ -219,7 +217,7 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 10, "swamp", "#3e443c", ["forest", "plains", "water"], 0.8
+            coordinates, age, 10, "swamp", "#555c45", ["forest", "plains", "water"], 0.8
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -244,7 +242,7 @@ class Snowy(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"]
+            coordinates, age, 7, "snowy", "#ecfffd", ["forest", "mountain", "plains"]
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
