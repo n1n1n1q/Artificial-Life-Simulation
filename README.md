@@ -1,5 +1,5 @@
 # Terrain-Generation
-<img align="right" width="80" height="80" src="./src/py_terrain/ui/assets/.readme/logo.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
+<img align="right" width="80" height="80" src="https://github.com/n1n1n1q/Terrain-Generation/blob/main/assets/.readme/logo.png?raw=true">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
 ## Contents
 - [Installation](#installation)
 - [Discrete math](#discrete-mathematics-principles)
