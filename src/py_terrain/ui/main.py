@@ -14,7 +14,7 @@ def start_ui():
     """
     Opens QT application
     """
-    print(f'OS: {os.listdir()}')
+    # print(f'OS: {os.listdir()}')
     app = QApplication([])
     window = MainWindow()
     app.setStyleSheet(impresources.read_text('py_terrain', 'style.qss'))

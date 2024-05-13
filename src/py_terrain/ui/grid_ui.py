@@ -2,9 +2,7 @@
 Grid widget and grid cell widget
 """
 
-import random
-
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPixmap
@@ -32,8 +30,9 @@ class GridWidget(QWidget):
         self.grid_layout = QVBoxLayout()
         self.grid_layout.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
-        self._parent = parent
+        self.parent_ = parent
         self.setLayout(self.grid_layout)
+        self.parent_.side_panel.export_button.clicked.connect(self.export_as_png)
 
     def clear_grid(self):
         """
@@ -76,8 +75,20 @@ class GridWidget(QWidget):
         is_stopped = self.grid.update_grid()
         self.update_grid()
         if is_stopped:
-            self._parent.toggle_update()
-            self._parent.side_panel.textures_button.setEnabled(True)
+            self.parent_.toggle_update()
+            self.parent_.side_panel.textures_button.setEnabled(True)
+
+    def export_as_png(self):
+        """
+        Export the map as png
+        """
+        pixmap = QPixmap(self.size())
+        self.render(pixmap)
+        file_name, _ = QFileDialog.getSaveFileName(
+            self, "Save Image", "", "PNG (*.png)"
+        )
+        if file_name:
+            pixmap.save(file_name + ".png", "PNG")
 
 
 class GridCellWidget(QLabel):
@@ -87,7 +98,7 @@ class GridCellWidget(QLabel):
 
     def __init__(self, parent=None, grid_width=None, grid_height=None):
         super().__init__()
-        self._parent = parent
+        self.parent_ = parent
         min_side = min(1400 / grid_width, 900 / grid_height)
         self.setFixedSize(min_side, min_side)
         self.setAutoFillBackground(True)
