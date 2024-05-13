@@ -36,7 +36,7 @@ You can see FSM's diagram on the right. State changes with some random chance an
 
 ## Back-end
 ### The architecture of the project
-The project is implemented in Python 3.11. It is highly recommended to use docker in order to run it.  
+The project is implemented in Python 3.11.  
 The external libraries used in the project are: PySide6 *(user interface and generation visualization)*, MatPlotLib *(the color submodule of the library, used for color manipulation)*, NumPy *(for optimizing operations with 2D arrays)* and their dependencies.  
 The following modules are implemented:
 * *Cells* module, which contains cells' info and behaivours. The module is highly customizable and is developped in such a way that makes implementing new cell types very easy and quick.
