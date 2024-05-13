@@ -78,3 +78,13 @@ class MainWindow(QMainWindow):
         ...
         """
         cls.DELAY = new
+
+    def resizeEvent(self, event):
+        """
+        Resize
+        """
+        print("AAA")
+        self.grid.setFixedSize((int(1400*self.width()/1920)),(int(900*self.height()/1080)))
+        for cell in self.grid.cells:
+            cell.resize_()
+        QMainWindow.resizeEvent(self, event)
