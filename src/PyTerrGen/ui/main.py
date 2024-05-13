@@ -3,11 +3,10 @@ Ui main
 """
 
 import sys
-import os
 
 from importlib import resources as impresources
 from PySide6.QtWidgets import QApplication
-from py_terrain.ui.main_window import MainWindow
+from PyTerrGen.ui.main_window import MainWindow
 
 
 def start_ui():

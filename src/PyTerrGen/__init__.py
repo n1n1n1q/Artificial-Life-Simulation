@@ -1,1 +1,1 @@
-from py_terrain.ui.main import start_ui
+from PyTerrGen.ui.main import start_ui
