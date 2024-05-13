@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "py_terrain"
-version = "0.0.1.35"
+name = "PyTerrGen"
+version = "0.0.1.37"
 authors = [
   {author = "Oleh Basystyi", name = "Oleh"},
   {author = "Anna Stasyshyn", name = "Anna"},
@@ -41,4 +41,4 @@ Homepage = "https://github.com/n1n1n1q/Terrain-Generation"
 Issues = "https://github.com/n1n1n1q/Terrain-Generation/issues"
 
 [project.scripts]
-pyterrain = "py_terrain.main:start_ui"
+PyTerrGen = "PyTerrGen.main:start_ui"
