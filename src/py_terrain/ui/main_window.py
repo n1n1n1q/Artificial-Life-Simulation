@@ -9,8 +9,8 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import QTimer, Qt
-from ui.grid_ui import GridWidget
-from ui.widgets import SidePanelWidget
+from py_terrain.ui.grid_ui import GridWidget
+from py_terrain.ui.widgets import SidePanelWidget
 
 
 class MainWindow(QMainWindow):

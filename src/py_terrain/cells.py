@@ -48,11 +48,11 @@ class Cell(ABC):
         self.active = True
         other.active = True
         other.__class__ = self.__class__
+        other._color = self._color
         other.threshold_age = self.threshold_age
         other.type = self.type
         other.submissive = self.submissive
         other.changed = True
-        other.set_color(self._color)
 
     @abstractmethod
     def infect(self, other: "Cell") -> None:
@@ -68,18 +68,15 @@ class Cell(ABC):
         probabilities = list(self.SUBTYPES.values())
         sub = random.choices(options, probabilities)[0]
         return sub
-
-    def set_color(self, new):
-        """
-        Set cell's color
-        """
-        self._color = new
+        # if 1 - self.SUBTYPES[sub] >= random.random():
+        #     return sub
+        # return "regular"
 
     @property
     def color(self):
-        """
-        Calculates the color of the cell based on its type and height
-        """
+        """Calculates the color of the cell based on its type and height"""
+        # if self.type == 'water':
+        #     return self._color
         rgb = colors.hex2color(self._color)
         rgb = (
             min(max(rgb[0] + (self.height - 10) / 100, 0), 1),
@@ -90,9 +87,6 @@ class Cell(ABC):
 
     @property
     def age_coeff(self):
-        """
-        Returns age coefficient
-        """
         return 1 - (self.age / self.threshold_age) if self.age > 3 else 0
 
     def __repr__(self):
@@ -147,13 +141,12 @@ class Plains(Cell):
     SUBTYPES = {"grassy": 0.75, "house": 0.05}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 39, "plains", "#62bc2f", ["water"], 0.09)
+        super().__init__(coordinates, age, 50, "plains", "#66C61C", ["water"], 0.09)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Plain cell's infect method
-        Infects only water cells, with a certain chance + {k} + {age_coeff}, where k = N of
-        the same type cells around the initial one squared divided by 500
+        Infects only water cells, with a 60% + {k} chance, where k = coeff / 200
         """
         if (
             other.type in self.submissive
@@ -177,21 +170,17 @@ class Desert(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 27, "desert", "#f6d7b0", ["water"], probability=0.1
+            coordinates, age, 35, "desert", "#f6d7b0", ["water"], probability=0.1
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Desert cell's infect method
-        Infects only water cells, either with a ceratin chance + {k}, where k = coeff**2 / 120
+        Infects only water cells, either with a 75% + {k} chance, where k = coeff / 120
         """
         if (
             other.type in self.submissive
             and random.random() + coeff**2 / 120 > 0.9
-            and self.age <= self.threshold_age
-        ) or (
-            other.type == "plains"
-            and random.random() > 0.95
             and self.age <= self.threshold_age
         ):
             self._change_state(other)
@@ -206,13 +195,11 @@ class Forest(Cell):
     SUBTYPES = {"birch": 0.34, "oak": 0.33, "mixed": 0.23, "pine": 0.1}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(coordinates, age, 15, "forest", "#5D9F59", ["plains"], 0.17)
+        super().__init__(coordinates, age, 15, "forest", "#44801a", ["plains"], 0.17)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Forest cell's infect method
-        Infects only plains cells with either a certain chance or if there are from 0 to 2 forest
-        cells around the it
         """
         if (
             other.type in self.submissive
@@ -232,14 +219,12 @@ class Swamp(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 10, "swamp", "#555c45", ["forest", "plains", "water"], 0.4
+            coordinates, age, 10, "swamp", "#3e443c", ["forest", "plains", "water"], 0.8
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Swamp's cell infect method
-        Infects forest, plains and water cells with either a certain chance or if there are from
-        1 to 3 swamp cells around it
         """
         if (
             other.type in self.submissive
@@ -259,14 +244,12 @@ class Snowy(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 7, "snowy", "#ecfffd", ["forest", "mountain", "plains"], 0.11
+            coordinates, age, 7, "snowy", "#FFFFFF", ["forest", "mountain", "plains"]
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """
         Snowy cell's infect method
-        Infects forest, mountain and plains cells with either a certain chance or if there are from
-        1 to 3 swamp cells around it
         """
         if (
             other.type in self.submissive
@@ -292,7 +275,6 @@ class Mountain(Cell):
             "mountain",
             "#808080",
             ["plains"],
-            0.17
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:

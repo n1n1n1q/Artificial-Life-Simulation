@@ -5,7 +5,7 @@ Map/grid class
 import random
 import numpy as np
 
-from cells import Cell, Void, Water, Plains, Desert, Forest, Mountain, Swamp, Snowy
+from py_terrain.cells import Cell, Void, Water, Plains, Desert, Forest, Mountain, Swamp, Snowy
 
 
 class Grid:
@@ -20,11 +20,9 @@ class Grid:
         self._m = m
         self.seed = seed if seed else self.generate_seed()
         self.destinations = [0, 0]
-        self.scaling_coeff = (n * m) / (43 * 28)
+        self.scaling_coeff = (n * m) / (60 * 60)
         if self.scaling_coeff < 0.8:
             self.scaling_coeff += (1 - self.scaling_coeff) / ((self._n + self._m) / 10)
-        elif self.scaling_coeff > 1.2:
-            self.scaling_coeff -=  (self.scaling_coeff) / ((self._n + self._m) / 10) ** 0.2
         self.set_up()
 
     def __getitem__(self, i):

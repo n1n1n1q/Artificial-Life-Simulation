@@ -12,7 +12,11 @@ from PySide6.QtWidgets import (
     QSlider,
     QLineEdit,
     QLabel,
+    QFrame,
+    QSpacerItem,
+    QSizePolicy,
 )
+import pkg_resources
 
 from PySide6.QtCore import Qt
 
@@ -24,7 +28,7 @@ class SidePanelWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.parent_ = parent
+        self._parent = parent
         self.sidebar_layout = QVBoxLayout()
 
         self.main_title = Title("Terrain generation")
@@ -52,7 +56,6 @@ class SidePanelWidget(QWidget):
         self.regenerate_button = RegenerateButton(self)
         self.start_button = ToggleButton(self)
         self.textures_button = ApplyTexturesButton(self)
-        self.export_button = ExportButton(self)
 
         self.top_section = QWidget()
         self.top_layout = QVBoxLayout()
@@ -83,12 +86,6 @@ class SidePanelWidget(QWidget):
         )
         self.bottom_layout.addWidget(
             self.textures_button, alignment=Qt.AlignmentFlag.AlignBottom
-        )
-        self.bottom_layout.addWidget(
-            self.regenerate_button, alignment=Qt.AlignmentFlag.AlignBottom
-        )
-        self.bottom_layout.addWidget(
-            self.export_button, alignment=Qt.AlignmentFlag.AlignBottom
         )
         self.bottom_section.setLayout(self.bottom_layout)
 
@@ -132,7 +129,7 @@ class ToggleButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__("Start")
-        self.parent_ = parent
+        self._parent = parent
 
 
 class SeedInputLabel(QLabel):
@@ -152,7 +149,7 @@ class SeedInput(QLineEdit):
 
     def __init__(self, parent=None):
         super().__init__()
-        self.parent_ = parent
+        self._parent = parent
         self.setMaxLength(20)
         self.textChanged.connect(self.reset_color)
 
@@ -183,7 +180,7 @@ class DelaySlider(QSlider):
 
     def __init__(self, parent=None):
         super().__init__()
-        self.parent_ = parent
+        self._parent = parent
         self.setOrientation(Qt.Horizontal)
         self.setRange(self.MIN_DELAY, self.MAX_DELAY)
         self.setValue(50)
@@ -193,7 +190,7 @@ class DelaySlider(QSlider):
         """
         Update info's delay val
         """
-        info = self.parent_.info
+        info = self._parent.info
         info.delay = self.value()
         info.update_text()
 
@@ -205,47 +202,36 @@ class RegenerateButton(QPushButton):
 
     def __init__(self, parent=None):
         super().__init__("Regenerate")
-        self.parent_ = parent
+        self._parent = parent
         self.clicked.connect(self.on_click)
 
     def on_click(self) -> None:
         """
         Regenerate button, on click event
         """
-        if self.parent_.validate_all_inputs():
-            grid = self.parent_.parent_.grid
+        if self._parent.validate_all_inputs():
+            grid = self._parent._parent.grid
             try:
                 size = (
-                    int(self.parent_.size_input_n.text()),
-                    int(self.parent_.size_input_m.text()),
+                    int(self._parent.size_input_n.text()),
+                    int(self._parent.size_input_m.text()),
                 )
             except ValueError:
                 size = grid.n_rows, grid.n_cols
-            self.parent_.parent_.grid.n_rows, self.parent_.parent_.grid.n_cols = size
+            self._parent._parent.grid.n_rows, self._parent._parent.grid.n_cols = size
             seed = (
-                self.parent_.seed_input.text()
-                if self.parent_.seed_input.text()
+                self._parent.seed_input.text()
+                if self._parent.seed_input.text()
                 else grid.grid.generate_seed()
             )
-            info = self.parent_.info
+            info = self._parent.info
             info.seed = seed
             info.size = size
             info.update_text()
 
             grid.setParent(None)
-            self.parent_.textures_button.setEnabled(False)
-            self.parent_.parent_.init_grid(size, seed)
-
-
-class ExportButton(QPushButton):
-    """
-    Export button
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.parent_ = parent
-        self.setText("Export")
+            self._parent.textures_button.setEnabled(False)
+            self._parent._parent.init_grid(size, seed)
 
 
 class SizeLabel(QLabel):
@@ -265,7 +251,7 @@ class SizeField(QLineEdit):
 
     def __init__(self, parent=None) -> None:
         super().__init__()
-        self.parent_ = parent
+        self._parent = parent
         self.textChanged.connect(self.reset_color)
 
     def reset_color(self):
@@ -298,7 +284,7 @@ class Info(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.parent_ = parent
+        self._parent = parent
         self.seed = None
         self.size = None
         self.delay = None
@@ -308,7 +294,7 @@ class Info(QLabel):
         Update info text
         """
         self.setText(
-            f"""Seed: {self.seed}
+            f"""Seed = {self.seed}
 Map's size: {self.size[1]}x{self.size[0]}
 Delay: {self.delay}"""
         )
@@ -321,7 +307,7 @@ class ApplyTexturesButton(QPushButton):
 
     def __init__(self, parent):
         super().__init__("Apply textures")
-        self.parent_ = parent
+        self._parent = parent
         self.setEnabled(False)
         self.clicked.connect(self.on_click)
 
@@ -329,7 +315,8 @@ class ApplyTexturesButton(QPushButton):
         """
         Apply textures, on click event
         """
-        grid = self.parent_.parent_.grid
+        print('click')
+        grid = self._parent._parent.grid
         for i, cell_ in enumerate(grid.cells):
             cell_.setPixmap(QPixmap())
             cell = grid.grid[i // grid.n_cols][i % grid.n_cols]
@@ -351,11 +338,13 @@ class ApplyTexturesButton(QPushButton):
                     for n, c in enumerate(cells_directions):
                         curr_cell = grid.cells[i + c]
                         texture_path = f"assets/{cell.type}/{subtype}{n + 1}.png"
-                        curr_cell.set_texture(texture_path)
+                        curr_cell.set_texture(pkg_resources.resource_filename(__name__, texture_path))
+                        print(pkg_resources.resource_filename(__name__, texture_path))
                     cells = [(0, 0), (0, 1), (1, 0), (1, 1)]
                     for n, m in cells:
                         grid.grid[cell.x + n][cell.y + m].texture = True
                 else:
                     texture_path = f"assets/{cell.type}/{subtype}.png"
-                    cell_.set_texture(texture_path)
+                    print(pkg_resources.resource_filename(__name__, texture_path))
+                    cell_.set_texture(pkg_resources.resource_filename(__name__, texture_path))
                     cell.texture = True
