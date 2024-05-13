@@ -1,5 +1,5 @@
 # Terrain-Generation
-<img align="right" width="80" height="80" src="./assets/.readme/logo.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
+<img align="right" width="80" height="80" src="./src/py_terrain/ui/assets/.readme/logo.png">Customizable Minecraft-inspired application that simulates procedural terrain generation using cellular automata in Python.
 ## Contents
 - [Installation](#installation)
 - [Discrete math](#discrete-mathematics-principles)
@@ -29,7 +29,7 @@ pip install -r requirements.txt
 python src/main.py
 ```
 ## Discrete mathematics principles
-<img align="right" width = 200 src="assets/.readme/automata.png">Our project's goal is to take a look at the practical usage of discrete mathematics principles, specifically the application of automata theory in procedural generation.  
+<img align="right" width = 200 src="./src/py_terrain/ui/assets/.readme/automata.png">Our project's goal is to take a look at the practical usage of discrete mathematics principles, specifically the application of automata theory in procedural generation.  
 Cellular automata are commonly used for simulation of different biological, physical, chemical proccessed, but another usage is procedural map or level generation in game development.  
 
 You can see FSM's diagram on the right. State changes with some random chance and certain map conditions (More detailed description at [Cells types and certain behaivours](#cells-types-and-certain-behaviours))
@@ -51,9 +51,9 @@ The grid module serves as a cells handler. It sets the map up and updates it. Th
 The user interface is implemented with Qt6 Framework (in our case, we used PySide6, the official Python module from the Qt for Python project).
 The Ui has two main parts: the settings sidebar and the grid - the terrain generation visualization itself. 
   
-![UI-on-launch](assets/.readme/ui.png)
+![UI-on-launch](./src/py_terrain/ui/assets/.readme/ui.png)
 #### Sidebar pannel
-<img align="right" width="225" src="assets/.readme/sidepanel.png"></img>
+<img align="right" width="225" src="./src/py_terrain/ui/assets/.readme/sidepanel.png"></img>
 The panel contains the following features:
 * Basic inforamtion about the current map
 * Settings to customize new map  
@@ -70,7 +70,7 @@ The panel contains the following features:
 
 
 #### Grid
-<img align="right" width="150" height="150" src="assets/.readme/generation.gif"></img>The grid submodule of the UI module contains the grid widget which handles the visualization updates. It contains widgets that reprsent the current state of the cells, each with a size adjusted based on the number of columns and rows of the map, and a background color depending on the type of the cell and its height attribute.   
+<img align="right" width="150" height="150" src="./src/py_terrain/ui/assets/.readme/generation.gif"></img>The grid submodule of the UI module contains the grid widget which handles the visualization updates. It contains widgets that reprsent the current state of the cells, each with a size adjusted based on the number of columns and rows of the map, and a background color depending on the type of the cell and its height attribute.   
 ## Generation
 ### Seeds
 Seeds are character sequences that can generate certain maps. Their purpose is to provide the possibility to save a certain pattern for later. It holds the infomration about the locations of the inital biome cells (water, desert, plains), as well as further biome subtype disctribution (mountains, swamp, forest, snow). There are no restrictions for the seed entered by the user. If no seed is entered, a random seed will be generated. A randomly generated seed is a sequence of 20 characters from the following "1234567890abcdefghABCDEFGHQWERTYqwerty".  
