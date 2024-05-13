@@ -22,8 +22,7 @@ class GridWidget(QWidget):
     ) -> None:
         super().__init__(parent)
         self.grid = Grid(n_rows, n_cols, seed)
-        self.setFixedHeight(900)
-        self.setFixedWidth(1400)
+        self.setFixedSize((int(1400*parent.width()/1920)),(int(900*parent.height()/1080)))
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.cells = []
@@ -98,8 +97,9 @@ class GridCellWidget(QLabel):
 
     def __init__(self, parent=None, grid_width=None, grid_height=None):
         super().__init__()
+        self.size = grid_width, grid_height
         self.parent_ = parent
-        min_side = min(1400 / grid_width, 900 / grid_height)
+        min_side = min(self.parent_.width() / grid_width, self.parent_.height() / grid_height)
         self.setFixedSize(min_side, min_side)
         self.setAutoFillBackground(True)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -119,3 +119,8 @@ class GridCellWidget(QLabel):
         pixmap = QPixmap(filepath)
         self.setPixmap(pixmap)
         self.setScaledContents(True)
+
+    def resize_(self):
+        min_side = min(self.parent_.width() / self.size[0], self.parent_.height() / self.size[1])
+        print(min_side, self.parent_.width())
+        self.setFixedSize(min_side, min_side)

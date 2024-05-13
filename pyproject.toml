@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "py_terrain"
-version = "0.0.1.31"
+version = "0.0.1.35"
 authors = [
   {author = "Oleh Basystyi", name = "Oleh"},
   {author = "Anna Stasyshyn", name = "Anna"},
@@ -13,7 +13,12 @@ authors = [
 description = "Procedural map generation with cellular automata in Python"
 readme = "README.md"
 requires-python = ">=3.11"
-requires = [
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
   "contourpy==1.2.1",
   "cycler==0.12.1",
   "fonttools==4.51.0",
@@ -29,11 +34,6 @@ requires = [
   "python-dateutil==2.9.0.post0",
   "shiboken6==6.7.0",
   "six==1.16.0",
-]
-classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
 ]
 
 [project.urls]
