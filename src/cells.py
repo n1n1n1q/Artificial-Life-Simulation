@@ -259,7 +259,13 @@ class Snowy(Cell):
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
         super().__init__(
-            coordinates, age, 7, "snowy", "#ecfffd", ["forest", "mountain", "plains"], 0.11
+            coordinates,
+            age,
+            7,
+            "snowy",
+            "#ecfffd",
+            ["forest", "mountain", "plains"],
+            0.11,
         )
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
@@ -285,15 +291,7 @@ class Mountain(Cell):
     SUBTYPES = {"peaky": 0.05, "steep": 0.95}
 
     def __init__(self, coordinates: tuple[int, int], age: int = 0) -> None:
-        super().__init__(
-            coordinates,
-            age,
-            7,
-            "mountain",
-            "#808080",
-            ["plains"],
-            0.17
-        )
+        super().__init__(coordinates, age, 7, "mountain", "#808080", ["plains"], 0.17)
 
     def infect(self, other: Cell, coeff: int = 0) -> None:
         """

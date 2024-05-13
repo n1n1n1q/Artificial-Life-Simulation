@@ -24,7 +24,9 @@ class Grid:
         if self.scaling_coeff < 0.8:
             self.scaling_coeff += (1 - self.scaling_coeff) / ((self._n + self._m) / 10)
         elif self.scaling_coeff > 1.2:
-            self.scaling_coeff -=  (self.scaling_coeff) / ((self._n + self._m) / 10) ** 0.2
+            self.scaling_coeff -= (self.scaling_coeff) / (
+                (self._n + self._m) / 10
+            ) ** 0.2
         self.set_up()
 
     def __getitem__(self, i):

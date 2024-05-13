@@ -18,7 +18,11 @@
 
 ## Installation
 ### Install via PyPi
-...
+**Prerequisites:** Python 3.11, latest pip version
+```
+pip install PyTerrGen
+PyTerrGen
+```
 ### Manual install
 **Prerequisites:** Python 3.11  
 Clone the repo, cd into the folder, install dependencies and run main file

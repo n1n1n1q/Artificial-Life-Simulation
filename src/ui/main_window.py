@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setMaximumSize(1920, 1080)
         self.setMinimumSize(1280, 720)
-        self.resize(1280, 720)
+        self.resize(1400, 720)
         self.setWindowTitle("Terrain Generation")
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -83,8 +83,9 @@ class MainWindow(QMainWindow):
         """
         Resize
         """
-        print("AAA")
-        self.grid.setFixedSize((int(1400*self.width()/1920)),(int(900*self.height()/1080)))
+        self.grid.setFixedSize(
+            (int(1400 * self.width() / 1920)), (int(900 * self.height() / 1080))
+        )
         for cell in self.grid.cells:
             cell.resize_()
         QMainWindow.resizeEvent(self, event)
