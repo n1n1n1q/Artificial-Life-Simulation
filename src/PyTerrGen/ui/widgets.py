@@ -353,13 +353,14 @@ class ApplyTexturesButton(QPushButton):
                     for n, c in enumerate(cells_directions):
                         curr_cell = grid.cells[i + c]
                         texture_path = f"assets/{cell.type}/{subtype}{n + 1}.png"
-                        curr_cell.set_texture(pkg_resources.resource_filename(__name__, texture_path))
-                        print(pkg_resources.resource_filename(__name__, texture_path))
+                        curr_cell.set_texture(pkg_resources.resource_filename(
+                            __name__,
+                            texture_path,
+                        ))
                     cells = [(0, 0), (0, 1), (1, 0), (1, 1)]
                     for n, m in cells:
                         grid.grid[cell.x + n][cell.y + m].texture = True
                 else:
                     texture_path = f"assets/{cell.type}/{subtype}.png"
-                    print(pkg_resources.resource_filename(__name__, texture_path))
                     cell_.set_texture(pkg_resources.resource_filename(__name__, texture_path))
                     cell.texture = True

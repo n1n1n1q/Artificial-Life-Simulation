@@ -16,6 +16,6 @@ def start_ui():
     # print(f'OS: {os.listdir()}')
     app = QApplication([])
     window = MainWindow()
-    app.setStyleSheet(impresources.read_text('py_terrain', 'style.qss'))
+    app.setStyleSheet(impresources.read_text('PyTerrGen', 'style.qss'))
     window.show()
     sys.exit(app.exec())
