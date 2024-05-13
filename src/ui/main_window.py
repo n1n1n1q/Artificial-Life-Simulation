@@ -23,8 +23,8 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setMaximumSize(1920, 1080)
-        self.setMinimumSize(1920, 1080)
-        self.resize(1920, 1080)
+        self.setMinimumSize(1280, 720)
+        self.resize(1280, 720)
         self.setWindowTitle("Terrain Generation")
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
